@@ -6,28 +6,15 @@ from nltk.stem import WordNetLemmatizer
 
 # Goal: universally clean the tweets and output as a spark df
 
-# Download required NLTK resources if not already present
-def download_nltk_resources():
-    """Download required NLTK resources for lemmatization and POS tagging."""
+def download_nltk_data():
+    """Download required NLTK data."""
     try:
-        nltk.data.find('taggers/averaged_perceptron_tagger')
+        nltk.data.find('taggers/averaged_perceptron_tagger_eng')
     except LookupError:
-        print("Downloading averaged_perceptron_tagger...")
-        nltk.download('averaged_perceptron_tagger', quiet=True)
-    
-    try:
-        nltk.data.find('corpora/wordnet')
-    except LookupError:
-        print("Downloading wordnet...")
+        print("Downloading required NLTK data...")
+        nltk.download('averaged_perceptron_tagger_eng', quiet=True)
         nltk.download('wordnet', quiet=True)
-
-# Download resources before creating SparkSession
-download_nltk_resources()
-
-ss = SparkSession.builder \
-        .appName("TwitterSentimentAnalysis") \
-        .getOrCreate()
-
+        nltk.download('omw-1.4', quiet=True)
 
 def lemmatize(data_str):
     """
@@ -152,6 +139,15 @@ def load_and_preprocess_data(file_path, text_column="Phrase", sentiment_column="
     Returns:
         Spark DataFrame with cleaned data
     """
+
+    # Download required NLTK data
+    download_nltk_data()
+
+    # Create Spark session
+    ss = SparkSession.builder \
+        .appName("TwitterSentimentAnalysis") \
+        .getOrCreate()
+    
     # Read CSV file
     df = ss.read.csv(
         file_path,
