@@ -6,5 +6,9 @@ Logbook:
 -   Implemented Naive Bayes analytical model
     (very basic with no real optimization)
 
+2025-11-14 (3): 
+-   Amended some instructions in the cells
+-   Fixed parameters in TfidfVectorizer
+
 2025-11-15 (1):
 -   ...
