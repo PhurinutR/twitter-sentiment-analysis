@@ -1,3 +1,10 @@
 Logbook:
 2025-11-14 (1):
-- Implemented the tf-idf embedding
+-   Implemented the TF-IDF embedding
+
+2025-11-14 (2):
+-   Implemented Naive Bayes analytical model
+    (very basic with no real optimization)
+
+2025-11-15 (1):
+-   ...
