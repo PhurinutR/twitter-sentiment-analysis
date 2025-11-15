@@ -13,3 +13,6 @@ Logbook:
 2025-11-15 (1):
 -   Attempted to get better result with TD-IDF function parameters
 -   Added training loss and accuracy evaluation
+
+2025-11-15 (2):
+-   Requested: Extract individual words' TF-IDF representations with a separate Notebook file
