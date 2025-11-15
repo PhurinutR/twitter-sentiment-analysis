@@ -11,4 +11,5 @@ Logbook:
 -   Fixed parameters in TfidfVectorizer
 
 2025-11-15 (1):
--   ...
+-   Attempted to get better result with TD-IDF function parameters
+-   Added training loss and accuracy evaluation
