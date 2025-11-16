@@ -1,7 +1,10 @@
 import sys
 import os
-from pipeline import BertDNNPipeline
-from text_dataset import TextDataset
+# Add parent directory to path for direct script execution
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from model1.pipeline import BertDNNPipeline
+from model1.text_dataset import TextDataset
 from torch.utils.data import DataLoader
 
 pipeline_eval = BertDNNPipeline.load(

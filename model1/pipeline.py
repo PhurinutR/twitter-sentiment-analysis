@@ -6,8 +6,8 @@ from sklearn.metrics import accuracy_score
 import os
 from typing import List, Tuple, Optional
 import json
-from dnn import DNNHead, BertDNN
-from text_dataset import TextDataset
+from .dnn import DNNHead, BertDNN
+from .text_dataset import TextDataset
 from torch.utils.data import random_split
 import wandb
 
@@ -62,9 +62,6 @@ class BertDNNPipeline:
         self.optimizer = torch.optim.AdamW(self.model.parameters(), lr=lr)
         self.scheduler = None  # Will be initialized in fit() if needed
 
-    # --------------------------------------------------------
-    # Fit (train)
-    # --------------------------------------------------------
     def fit(
         self,
         epochs: int = 3,
@@ -249,9 +246,6 @@ class BertDNNPipeline:
         else:
             raise ValueError(f"Unknown scheduler type: {scheduler_type}")
 
-    # --------------------------------------------------------
-    # Evaluate
-    # --------------------------------------------------------
     @torch.no_grad()
     def evaluate(self, val_loader: DataLoader) -> float:
         self.model.eval()
@@ -272,9 +266,6 @@ class BertDNNPipeline:
             trues.extend(true)
         return accuracy_score(trues, preds)
 
-    # --------------------------------------------------------
-    # Predict
-    # --------------------------------------------------------
     @torch.no_grad()
     def predict(self, texts: List[str]) -> List[int]:
         self.model.eval()
@@ -303,9 +294,6 @@ class BertDNNPipeline:
             preds.extend(pred.tolist())
         return preds
 
-    # --------------------------------------------------------
-    # Save
-    # --------------------------------------------------------
     def save(self, path: str):
         """Save model for inference (model weights + tokenizer + config only)"""
         os.makedirs(path, exist_ok=True)
@@ -368,9 +356,6 @@ class BertDNNPipeline:
         print(f"Checkpoint loaded: epoch {epoch}, loss: {loss:.4f}, val_acc: {val_acc_str}")
         return epoch, loss, val_acc
 
-    # --------------------------------------------------------
-    # Load
-    # --------------------------------------------------------
     @classmethod
     def load(cls, path: str, head_hidden_dims=[512, 256], num_classes=4, freeze_bert=False):
         tokenizer = BertTokenizer.from_pretrained(path)
