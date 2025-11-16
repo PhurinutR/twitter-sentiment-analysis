@@ -1,7 +1,5 @@
 .venv
 wandb
-pyspark==4.0.1
-nltk=
-wandb
-scikit-learn
-transformers
+model1/checkpoints
+model1/final_model
+model1/final_model_finetuned
