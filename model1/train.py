@@ -20,7 +20,7 @@ print(f"Resuming from epoch {epoch} with val_acc: {val_acc_str}")
 
 # 3. Continue training
 pipeline.fit(
-    epochs=30,
+    epochs=20,
     save_checkpoints=True,
     save_best_only=True,
     checkpoint_dir="./model1/checkpoints",
