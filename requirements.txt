@@ -5,3 +5,28 @@ scikit-learn
 transformers
 huggingface_hub
 joblib
+
+
+
+
+
+
+# ------------------------------
+#  jason requirements.txt
+# ------------------------------
+
+nltk==3.8.1
+gdown==5.2.0         
+
+# Core deep-learning stack
+torch==2.9.0         
+torchtext==0.5.0     
+
+# NLP
+spacy==3.8.7
+
+# Data wrangling & plotting
+pandas==2.3.3
+numpy==2.3.4
+seaborn==0.13.2
+matplotlib==3.10.7
