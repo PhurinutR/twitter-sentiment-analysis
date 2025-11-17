@@ -1,0 +1,25 @@
+Logbook:
+2025-11-14 (1):
+-   Implemented the TF-IDF embedding
+
+2025-11-14 (2):
+-   Implemented Naive Bayes analytical model
+    (very basic with no real optimization)
+
+2025-11-14 (3): 
+-   Amended some instructions in the cells
+-   Fixed parameters in TfidfVectorizer
+
+2025-11-15 (1):
+-   Attempted to get better result with TD-IDF function parameters
+-   Added training loss and accuracy evaluation
+
+2025-11-15 (2):
+-   Requested: Extract individual words' TF-IDF representations with a separate Notebook file
+
+2025-11-16 (1):
+-   Added words TF-IDF representations for training and separate data separately
+-   Code simplification for main program, including loss computation
+-   Added more testing results in the main program
+
+2025-11-17 (1)
