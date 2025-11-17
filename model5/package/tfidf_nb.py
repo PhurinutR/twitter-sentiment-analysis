@@ -135,8 +135,8 @@ def train_evaluate(train_csv: str, test_csv: str, use_spark: bool = False, save_
         train_loss = loss_evaluator.evaluate(train_prediction)
         test_loss = loss_evaluator.evaluate(test_pred)
 
-        result["train_accuracy"] = float(train_accuracy)
-        result["test_accuracy"] = float(test_accuracy)
+        result["train_accuracy"] = float(train_accuracy * 100)
+        result["test_accuracy"] = float(test_accuracy * 100)
         result["train_log_loss"] = float(train_loss)
         result["test_log_loss"] = float(test_loss)
 
@@ -175,8 +175,8 @@ def train_evaluate(train_csv: str, test_csv: str, use_spark: bool = False, save_
         test_probability = model.predict_proba(X_test)
 
         # Evaluation
-        result["train_accuracy"] = float(accuracy_score(train_labels, train_prediction))
-        result["test_accuracy"] = float(accuracy_score(test_labels, test_prediction))
+        result["train_accuracy"] = float(accuracy_score(train_labels, train_prediction) * 100)
+        result["test_accuracy"] = float(accuracy_score(test_labels, test_prediction) * 100)
         result["train_log_loss"] = float(log_loss(train_labels, train_probability, labels=model.classes_))
         result["test_log_loss"] = float(log_loss(test_labels, test_probability, labels=model.classes_))
 

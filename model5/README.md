@@ -4,9 +4,9 @@ Author: *Marcus KWAN TH*<br>
 
 ## Prerequisite:
 1. Clone this GitHub repository into the local PC.
-2. Run the commands provided in the "Getting Started" guide in the home page.
+2. Run the commands provided in the "Getting Started" guide in the home page to install necessary libraries.
 
-## Using the TFIDF with Naive Bayes Package for Training and Evaluation
+## Using the TF-IDF with Naive Bayes Package for Training and Evaluation
 
 A small package `tfidf_nb.py` is provided at `model5/package` to run TF-IDF + Naive Bayes and return accuracy/loss metrics.
 
@@ -47,6 +47,7 @@ python -m model5.package.test_train
 - If you found that PySpark approach runs slow in the program, consider switching to scikit-learn, which are much more efficient. They should works the same way regardless. (I just include both of them for the sake of the project)
 
 # Testing files if you are interested...
+This part simply documented the approaches that I have implemented in a Notebook format. They are now used for testing purpose, but if you are interested on how the TF-IDF and Naive Bayes mechanics work, you may check them out in the `model5/Test Notebooks` directory.
 ## Using TF-IDF with Naive Bayes Jupyter Notebook
 ⚠️ Note: Before running the notebook, please ensure the file `util.zip` is present in the root directory. If not, zip the util folder using the following command: 
 ```bash
