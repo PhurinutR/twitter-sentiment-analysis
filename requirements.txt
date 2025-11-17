@@ -4,3 +4,4 @@ wandb
 scikit-learn
 transformers
 huggingface_hub
+joblib
