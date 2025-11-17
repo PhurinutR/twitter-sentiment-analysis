@@ -1,6 +1,6 @@
 # Model 5 Implementation
-Core architecture: **TF-IDF** embedding model with **Naive Bayes** classifier model
-Author: *Marcus KWAN TH*
+Core architecture: **TF-IDF** embedding model with **Naive Bayes** classifier model<br>
+Author: *Marcus KWAN TH*<br>
 
 ## Prerequisite (Same as Getting Started):
 1. Cloned this GitHub repository into the local PC
