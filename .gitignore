@@ -3,3 +3,10 @@ wandb
 model1/checkpoints
 model1/final_model
 model1/final_model_finetuned
+
+/model2/data/
+/model2/.vector_cache/
+/model2/lstm/
+/model2/lstm_traget2/
+/model2/lstm_traget/
+
