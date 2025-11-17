@@ -21,3 +21,5 @@ Logbook:
 -   Added words TF-IDF representations for training and separate data separately
 -   Code simplification for main program, including loss computation
 -   Added more testing results in the main program
+
+2025-11-17 (1)
