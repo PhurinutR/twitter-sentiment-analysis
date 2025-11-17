@@ -15,3 +15,6 @@ Then, install PyTorch that's appropriate for your machine. If you are on Linux y
 ```bash
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130
 ```
+
+### Large Model Weight Installation
+1. For model1 which is BERT + DNN (ResNet), please see this [model 1 installation guideline](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model1).
