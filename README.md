@@ -19,7 +19,7 @@ pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130
 ### Large Model Weight Installation Guides
 1. For model1 which is BERT + DNN (ResNet), please see this [model 1 installation guideline](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model1).
 
-2. *TBA*
+2. For model2 which is GloVe and (Bidirectional) LSTM, please see the [guide in model 2](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model2).
 
 3. For model3 which is Doc2Vec + Random Forest, please see the [guide in model 3](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model3).
 
