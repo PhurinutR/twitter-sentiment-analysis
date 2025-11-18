@@ -55,6 +55,7 @@ python -m model5.package.test_load
     )
 	print(eval)
 ```
+
 ### Notes:
 	- You may access the evaluated metrics using `eval['train']` and `data['test']`. To access the accuracy and loss metric separately, append `['accuracy']` or `['loss']`. An example is provided in the `test_load.py`.
 
