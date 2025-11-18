@@ -48,7 +48,7 @@ class FolderDataset(data.Dataset):
         examples = []
 
         root = os.path.abspath(root)
-        for class_dir in sorted(p for p in os.scandir(root) if p.is_dir()):
+        for class_dir in sorted([p for p in os.scandir(root) if p.is_dir()], key=lambda p: p.name):
             label = class_dir.name
             for entry in sorted(os.scandir(class_dir.path), key=lambda e: e.name):
                 if entry.is_file() and entry.name.endswith('.txt'):
@@ -248,8 +248,8 @@ def load_lstm(run_dir: str):
     label_field_path = os.path.join(run_dir, 'label_field.pth')
     if not os.path.exists(fields_path) or not os.path.exists(label_field_path):
         raise FileNotFoundError('Saved Fields not found in run_dir')
-    TEXT = torch.load(fields_path)
-    LABEL = torch.load(label_field_path)
+    TEXT = torch.load(fields_path,weights_only=False)
+    LABEL = torch.load(label_field_path,weights_only=False)
 
     # reconstruct model from the configs
     INPUT_DIM = config.get('vocab_size', len(TEXT.vocab))

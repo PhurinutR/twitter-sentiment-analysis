@@ -9,4 +9,8 @@ model1/final_model_finetuned
 /model2/lstm/
 /model2/lstm_traget2/
 /model2/lstm_traget/
+/model2/saved_models/
+
+
+.vector_cache/
 
