@@ -8,7 +8,7 @@ Author: *Marcus KWAN TH*<br>
 
 ## Using the TF-IDF with Naive Bayes Package for **Training and Evaluation**
 
-A function to run TF-IDF + Naive Bayes and return the accuracy with loss metrics are provided by `train_evaluate()`, within a package `model.py` under `model5/package`.
+A function to run TF-IDF + Naive Bayes and return the accuracy with loss metrics are provided by `train_evaluate()`, within a package `model.py` under `package` folder.
 
 ### Procedures:
 1. Please run `test_train.py` from the repository root directory:
@@ -75,4 +75,4 @@ predictions = model.predict(sample)
 A comprehensive example is provided in `test_load.py`, which also provides the classification prediction ability using scikit-learn libraries.
 
 # Testing files if you are interested...
-This part simply documented the approaches that I have implemented in a Notebook format. They are now used for testing purpose, but if you are interested on how the TF-IDF and Naive Bayes mechanics work, you may check them out in the `model5/Test Notebooks` directory.
+The folder `test-notebooks` contains the approaches that I have implemented in a Jupyter Notebook format. They are not used in the main implementation, but rather used for testing purpose. But if you are interested on how the TF-IDF and Naive Bayes mechanics work, you may check them out in that directory.
