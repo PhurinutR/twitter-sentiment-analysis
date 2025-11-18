@@ -58,7 +58,7 @@ python -m model5.package.test_load
 ```
 
 ### Notes:
-	- You may access the evaluated metrics using `eval['train']` and `data['test']`. To access the accuracy and loss metric separately, append `['accuracy']` or `['loss']`. An example is provided in the `test_load.py`.
+You may access the evaluated metrics using `eval['train']` and `data['test']`. To access the accuracy and loss metric separately, append `['accuracy']` or `['loss']`. An example is provided in the `test_load.py`.
 
 ## Using the TF-IDF with Naive Bayes Package for **Loading the Saved Model**
 
