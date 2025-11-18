@@ -22,13 +22,55 @@ numpy
 gensim
 scikit-learn
 joblib
+huggingface_hub
 ```
 
 
 
 ## Usage
 #######!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!call train_best.py to get the best model!
+you can also use from huggingface: ```https://huggingface.co/chrislhg/doc2vec-rf```
+1) download the model files:
+```python
+from huggingface_hub import hf_hub_download
 
+# Replace with the appropriate file names
+doc2vec_model_path = hf_hub_download(repo_id="chrislhg/doc2vec-rf", filename="best_doc2vec.model")
+classifier_model_path = hf_hub_download(repo_id="chrislhg/doc2vec-rf", filename="best_classifier.pkl")
+bigram_phraser_path = hf_hub_download(repo_id="chrislhg/doc2vec-rf", filename="bigram_phraser.model")
+```
+2) load the models
+   ```python
+    import joblib
+    from gensim.models import Doc2Vec
+    
+    # Load the models
+    doc2vec_model = Doc2Vec.load(doc2vec_model_path)
+    clf = joblib.load(classifier_model_path)
+    bigram_phraser = joblib.load(bigram_phraser_path)
+   ```
+3) make prediction:
+```python
+import numpy as np
+
+def infer_and_predict(phrase):
+    # Preprocess phrase (assuming it's a string)
+    bigrammed_phrase = bigram_phraser[phrase.split()]
+    vector = doc2vec_model.infer_vector(bigrammed_phrase)
+    
+    # Make prediction
+    prediction = clf.predict([vector])
+    return prediction
+
+# Example usage
+result = infer_and_predict("Your sample text here")
+print("Predicted Sentiment:", result)
+```
+
+
+
+
+# Explanation of my code (no need to use if you just call the models)
 ### 1. Train the Model
 
 ```bash
