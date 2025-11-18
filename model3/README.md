@@ -80,4 +80,23 @@ embeddings = np.array([
 new_df["Predicted_Sentiment"] = clf.predict(embeddings)
 print(new_df)
 ```
+```
+==================================================
+BEST HYPERPARAMETERS SELECTED
+==================================================
+Best Doc2Vec configuration:
+  → vector_size : 150
+  → epochs      : 40
+  → dm          : False
+  → window      : 8
+  → min_count   : 2
+  → alpha       : 0.025
+  → CV macro-F1 on pretrain : 0.5594
 
+Best Random Forest parameters:
+  → class_weight    : balanced
+  → max_depth       : 12
+  → min_samples_leaf: 4
+  → n_estimators    : 300
+==================================================
+```
