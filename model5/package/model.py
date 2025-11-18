@@ -6,7 +6,7 @@ Implementation of TF-IDF + Naive Bayes, training and evaluation.
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score, log_loss
-from typing import Optional
+from typing import Optional, Dict, Tuple
 import os, sys, joblib
 
 # Set PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON to current Python executable, 
@@ -23,8 +23,8 @@ except Exception:
         sys.path.insert(0, root_path)
     from util.preprocessing import load_and_preprocess_data
 
-# Functions
-def extract_docs_labels(spark_df, text_col: str = "Phrase", label_col: str = "Sentiment"):
+# Helper Functions
+def _extract_docs_labels(spark_df, text_col: str = "Phrase", label_col: str = "Sentiment"):
     """
     Parent function to convert Spark DataFrame to lists of documents and labels (strings and ints).
     """
@@ -34,9 +34,24 @@ def extract_docs_labels(spark_df, text_col: str = "Phrase", label_col: str = "Se
     labels = pdf.iloc[:, 1].astype(int).tolist()
     return documents, labels
 
-def train_evaluate(train_csv: str, test_csv: str, save_model_path: Optional[str] = None, tfidf_params: Optional[dict] = None, nb_params: Optional[dict] = None):
+def _evaluate_with_model(model, vectorizer, documents, labels) -> Tuple[float, float]:
     """
-    Main function to fit TF-IDF on training data and train a Naive Bayes classifier, then evaluate it.
+    Return (accuracy_percent, log_loss_value) for given documents/labels.
+    """
+    X = vectorizer.transform(documents)
+    preds = model.predict(X)
+    proba = model.predict_proba(X)
+    acc = float(accuracy_score(labels, preds) * 100)
+    try:
+        loss = float(log_loss(labels, proba, labels=model.classes_))
+    except Exception:
+        loss = float('nan')
+    return acc, loss
+
+# Callable Functions
+def train_model(train_csv: str, test_csv: str, save_model_path: Optional[str] = None, tfidf_params: Optional[dict] = None, nb_params: Optional[dict] = None):
+    """
+    Fit TF-IDF on training data and train a Naive Bayes classifier, then evaluate it.
 
     Args:
         train_csv: Path to training CSV file. Required.
@@ -59,68 +74,92 @@ def train_evaluate(train_csv: str, test_csv: str, save_model_path: Optional[str]
         }
 
     """
-    print("\nStarted TD-IDF + Naive Bayes pipeline...\n")
+    print("\nStarted TF-IDF + Naive Bayes training...\n")
 
-    # Parameters
     text_column = "Phrase"
     sentiment_column = "Sentiment"
     tfidf_params = tfidf_params or {"min_df": 4, "max_df": 0.95, "ngram_range": (1, 2), "use_idf": True}
     nb_params = nb_params or {}
 
-    # Load and preprocess using util package
+    # Load and preprocess
     train_spark_df = load_and_preprocess_data(train_csv, text_column, sentiment_column)
     test_spark_df = load_and_preprocess_data(test_csv, text_column, sentiment_column)
 
-    # Convert to lists for scikit path
-    train_documents, train_labels = extract_docs_labels(train_spark_df, text_column, sentiment_column)
-    test_documents, test_labels = extract_docs_labels(test_spark_df, text_column, sentiment_column)
+    train_documents, train_labels = _extract_docs_labels(train_spark_df, text_column, sentiment_column)
+    test_documents, test_labels = _extract_docs_labels(test_spark_df, text_column, sentiment_column)
 
-    # TF-IDF vectorization
+    # Vectorize
     tfidf = TfidfVectorizer(**tfidf_params)
     X_train = tfidf.fit_transform(train_documents)
     X_test = tfidf.transform(test_documents)
 
-    # Dictionary to hold results
-    result = {
-        "train_accuracy": None,
-        "test_accuracy": None,
-        "train_log_loss": None,
-        "test_log_loss": None,
-    }
-
-    # Use scikit-learn MultinomialNB (works with sparse matrices)
+    # Train
     model = MultinomialNB(**nb_params)
     model.fit(X_train, train_labels)
 
-    # Predict and compute metrics
-    train_prediction = model.predict(X_train)
-    test_prediction = model.predict(X_test)
+    # Metrics
+    train_acc, train_loss = _evaluate_with_model(model, tfidf, train_documents, train_labels)
+    test_acc, test_loss = _evaluate_with_model(model, tfidf, test_documents, test_labels)
 
-    # Probabilities and metrics
-    train_probability = model.predict_proba(X_train)
-    test_probability = model.predict_proba(X_test)
+    metrics = {
+        "train_accuracy": train_acc,
+        "test_accuracy": test_acc,
+        "train_log_loss": train_loss,
+        "test_log_loss": test_loss,
+    }
 
-    # Evaluation
-    result["train_accuracy"] = float(accuracy_score(train_labels, train_prediction) * 100)
-    result["test_accuracy"] = float(accuracy_score(test_labels, test_prediction) * 100)
-    result["train_log_loss"] = float(log_loss(train_labels, train_probability, labels=model.classes_))
-    result["test_log_loss"] = float(log_loss(test_labels, test_probability, labels=model.classes_))
-
-    # NEWLY ADDED: Persist model and vectorizer if requested
+    saved_paths = {}
     if save_model_path:
-        final_path = save_model_path + "/scikit"
+        final_path = os.path.join(save_model_path, "scikit")
         os.makedirs(final_path, exist_ok=True)
         try:
-            # 1. save model using joblib
             model_file = os.path.join(final_path, "scikit_model.pt")
-            joblib.dump(model, model_file)
-            # 2. save embedding model using joblib
             vec_file = os.path.join(final_path, "embedding.pt")
+            joblib.dump(model, model_file)
             joblib.dump(tfidf, vec_file)
         except Exception as e:
             print(f"saving failed: {e}")
 
-    return result
+    return metrics
+
+
+def evaluate_saved_model(saved_dir: str, train_csv: Optional[str] = None, test_csv: Optional[str] = None, text_column: str = "Phrase", sentiment_column: str = "Sentiment"):
+    """
+    Load saved embedding and classifier models and evaluate on provided CSV paths.
+
+    Args:
+        saved_dir: Directory where the TF-IDF embedding and Naive Bayes classifier models are saved. Required.
+        train_csv: Path to training CSV file. If provided, evaluate on training data. Optional, default to None.
+        test_csv: Path to testing CSV file. If provided, evaluate on testing data. Optional, default to None.
+        text_column: Name of the text column in the CSV files. Default is "Phrase".
+        sentiment_column: Name of the sentiment/label column in the CSV files. Default is "Sentiment".
+
+    Returns:
+        A dictionary with keys 'train' and/or 'test' mapping to metric dictionaries containing 'accuracy' and 'loss'.
+    """
+    loaded = load_saved_model(saved_dir)
+    if not loaded or loaded.get('model') is None or loaded.get('embedding') is None:
+        raise FileNotFoundError(f"No saved scikit model/vectorizer found in {saved_dir}")
+
+    model = loaded['model']
+    vectorizer = loaded['embedding']
+
+    results = {}
+    if train_csv:
+        train_df = load_and_preprocess_data(train_csv, text_column, sentiment_column).toPandas()
+        train_documents = train_df.iloc[:, 0].astype(str).tolist()
+        train_labels = train_df.iloc[:, 1].astype(int).tolist()
+        acc, loss = _evaluate_with_model(model, vectorizer, train_documents, train_labels)
+        results['train'] = {"accuracy": acc, "loss": loss}
+
+    if test_csv:
+        test_df = load_and_preprocess_data(test_csv, text_column, sentiment_column).toPandas()
+        test_documents = test_df.iloc[:, 0].astype(str).tolist()
+        test_labels = test_df.iloc[:, 1].astype(int).tolist()
+        acc, loss = _evaluate_with_model(model, vectorizer, test_documents, test_labels)
+        results['test'] = {"accuracy": acc, "loss": loss}
+
+    return results
 
 def load_saved_model(saved_dir: str):
     """Load a saved embedding and classifier models locally.

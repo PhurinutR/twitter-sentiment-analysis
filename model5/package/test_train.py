@@ -11,12 +11,12 @@ import pprint
 
 # Import model 5's package. If import fails, add root path to sys.path
 try:
-    from model5.package import train_evaluate
+    from model5.package import train_model
 except Exception:
     root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
     if root_path not in sys.path:
         sys.path.insert(0, root_path)
-    from model5.package import train_evaluate
+    from model5.package import train_model
 
 def main(): 
     # Modify these paths as needed
@@ -31,7 +31,7 @@ def main():
     nb_parameters = {"alpha": 1.0}  # Example for scikit-learn MultinomialNB, fine-turning
 
     # playaround with this function!
-    result = train_evaluate(
+    result = train_model(
         train_csv, 
         test_csv, 
         save_model_path=save_dir, 
