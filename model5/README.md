@@ -76,21 +76,3 @@ A comprehensive example is provided in `test_load.py`, which also provides the c
 
 # Testing files if you are interested...
 This part simply documented the approaches that I have implemented in a Notebook format. They are now used for testing purpose, but if you are interested on how the TF-IDF and Naive Bayes mechanics work, you may check them out in the `model5/Test Notebooks` directory.
-## Using TF-IDF with Naive Bayes Jupyter Notebook
-⚠️ Note: Before running the notebook, please ensure the file `util.zip` is present in the root directory. If not, zip the util folder using the following command: 
-
-```bash
-cd twitter-sentiment-analysis
-zip -r util.zip util
-```
-
-This step is necessary for PySpark to access the util package during distributed processing in the Notebook files.
-
-1. Run `tfidf_nb_program.ipynb` from the `Test Notebook` folder.
-2. Follow the instructions inside the Jupyter Notebook to play around with it.
-3. At the end, you will obtain a train/testing loss and accuracy score, fine-tune the parameters for `TfidfVectorizer()` and `NaiveBayes()` to adjust the parameters.
-
-## TF-IDF Word-embedding Exporter Jupyter Notebook
-1. Run `tfidf_word_embed.ipynb` from the `Test Notebook` folder.
-2. Follow the instructions inside the Jupyter Notebook to play around with it.
-3. You may check the `output` folder for the exported TF-IDF vectors after running the last cell of the file.
