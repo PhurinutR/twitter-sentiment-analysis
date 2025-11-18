@@ -8,7 +8,7 @@ Author: *Marcus KWAN TH*<br>
 
 ## Using the TF-IDF with Naive Bayes Package for **Training and Evaluation**
 
-A function to run TF-IDF + Naive Bayes and return the accuracy with loss metrics are provided by `train_evaluate()`, within a package `tfidf_nb.py` under `model5/package`.
+A function to run TF-IDF + Naive Bayes and return the accuracy with loss metrics are provided by `train_evaluate()`, within a package `model.py` under `model5/package`.
 
 ### Procedures:
 1. Please run `test_train.py` from the repository root directory:
@@ -38,7 +38,7 @@ print(res)
 
 ## Using the TF-IDF with Naive Bayes Package for **Loading the Saved Model and Prediction**
 
-Another function in `tfidf_nb.py` is `load_saved_model()`. As the name suggest, it loads the saved model from a directory into the program for inferencing.
+Another function in `model.py` is `load_saved_model()`. As the name suggest, it loads the saved model from a directory into the program for inferencing.
 
 If the `save_model_path` argument in `train_evaluate()` is set to a valid directory, the models will be saved locally. Specifically, the package saves `scikit_model.joblib` and `vectorizer.joblib` under the provided folder.
 

@@ -1,18 +1,20 @@
+# ------------------------------
+#  Standard Requirements
+# ------------------------------
 pyspark==4.0.1
 nltk
 wandb
 scikit-learn
 transformers
 huggingface_hub
-joblib
-
-
-
-
-
 
 # ------------------------------
-#  jason requirements.txt
+#  marcus part requirements
+# ------------------------------
+joblib
+
+# ------------------------------
+#  jason part requirements
 # ------------------------------
 
 nltk==3.8.1
