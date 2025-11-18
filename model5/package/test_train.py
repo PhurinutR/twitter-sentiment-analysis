@@ -18,28 +18,22 @@ except Exception:
         sys.path.insert(0, root_path)
     from model5.package import train_evaluate
 
-def main():
-    # Set to False to use scikit-learn instead of PySpark
-    spark = False
-
+def main(): 
     # Modify these paths as needed
-    train_csv = "Twitter_data/pre_traindata7.csv"
+    train_csv = "Twitter_data/pre_traindata7.csv" 
     test_csv = "Twitter_data/testdata7.csv"
 
     # Model saving directory (default saves to the model5/saved_models directory, set to None if you don't want to save models)
-    save_dir = "model5/saved_models"
+    save_dir = "model5/saved_models_pretrain7"
 
     # Sample dictionary of parameters for TF-IDF and Naive Bayes
-    tfidf_parameters = {"min_df": 4, "max_df": 0.95, "ngram_range": (1, 2)}
-    nb_parameters = {"smoothing": 1.0}  # Example for PySpark NaiveBayes
-    if not spark:
-        nb_parameters = {"alpha": 1.0}  # Example for scikit-learn MultinomialNB
+    tfidf_parameters = {"min_df": 4, "max_df": 0.95, "ngram_range": (1, 2)} # Fine-tuning of embedding model
+    nb_parameters = {"alpha": 1.0}  # Example for scikit-learn MultinomialNB, fine-turning
 
     # playaround with this function!
     result = train_evaluate(
         train_csv, 
         test_csv, 
-        use_spark=spark, 
         save_model_path=save_dir, 
         tfidf_params=tfidf_parameters, 
         nb_params=nb_parameters
