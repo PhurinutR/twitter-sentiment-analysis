@@ -6,9 +6,9 @@ Author: *Marcus KWAN TH*<br>
 1. Clone this GitHub repository into the local PC.
 2. Run the commands provided in the "Getting Started" guide in the home page to install necessary libraries.
 
-## Using the TF-IDF with Naive Bayes Package for Training and Evaluation
+## Using the TF-IDF with Naive Bayes Package for **Training and Evaluation**
 
-A small package `tfidf_nb.py` is provided at `model5/package` to run TF-IDF + Naive Bayes and return accuracy/loss metrics.
+A small package `tfidf_nb.py` is provided at `model5/package` to run TF-IDF + Naive Bayes and return accuracy and loss metrics.
 
 1. Please run `test_train.py` from the repository root directory:
 
@@ -24,27 +24,50 @@ from model5.package import train_evaluate
 res = train_evaluate(
 	'Twitter_data/traindata.csv',
 	'Twitter_data/testdata.csv',
-	use_spark=True,                 # default; set False for scikit-learn one
-    tfidf_parameters = {"min_df": 5, "max_df": 0.9, "ngram_range": (1, 2), "use_idf": True}     # Optional: Sample paramters for TF-IDF embedding
-    nb_parameters = {"modelType": "multinomial", "smoothing": 1.0}  # Optional: Sample parameters for PySpark NaiveBayes
-	save_model_path='model5/package/saved_models/scikit'  # optional: persist model+vectorizer
+    tfidf_parameters = {"min_df": 4, "max_df": 0.95, "ngram_range": (1, 2), "use_idf": True} # Optional: Sample paramters for TF-IDF embedding
+    nb_parameters = {"alpha": 1.0}  # Optional: Sample parameters for scikit-learn's Naive Bayes classifier
+	save_model_path='model5/package/saved_models'  # Optional: persist embedding model and classifier model
 )
 print(res)
 ```
 
-3. Saved files:
-- If the `save_model_path` argument is set to a valid directory, the models will be saved locally.
-	- For scikit-learn path the package saves `scikit_model.joblib` and `vectorizer.joblib` under the provided folder.
-	- For the PySpark path the package saves the Spark model directory `spark_model` and the `vectorizer.joblib` file.
-- You may run the file `test_load.py` to test the model-loading function:
+3. Notes:
+- The package is run from the root directory so the `util` package is importable.
+- Some verbose and warning from PySpark may appear in the console output. They are normal and no need to be worried about.
+
+## Using the TF-IDF with Naive Bayes Package for **Loading the Saved Model and Prediction**
+
+Another function in `tfidf_nb.py` is `load_saved_model()`. As the name suggest, it load the saved model from a directory into the program for inferencing.
+
+If the `save_model_path` argument in `train_evaluate()` is set to a valid directory, the models will be saved locally. Specifically, the package saves `scikit_model.joblib` and `vectorizer.joblib` under the provided folder.
+
+1. You may run the file `test_load.py` from the repo root directory to test the model-loading function:
 ```bash
 python -m model5.package.test_train
 ```
 
-4. Notes:
-- The package is run from the root directory so the `util` package is importable.
-- Some verbose and warning from PySpark may appear in the console output. They are normal and no need to be worried about.
-- If you found that PySpark approach runs slow in the program, consider switching to scikit-learn, which are much more efficient. They should works the same way regardless. (I just include both of them for the sake of the project)
+2. Sample Usage:
+```python
+from model5.package import load_saved_model
+
+data = load_saved_model(
+	saved_dir='model5/saved_model', 
+)
+print(data)
+```
+
+3. You may access the models using `data['model']` and `data['embedding']`. They are in a model object type already, which mean you can directly use the models with their respective libraries.
+	- Load TF-IDF embedding model with:
+```python
+vectorizer: TfidfVectorizer = data['embedding']
+sample = vectorizer.transform(list_of_sample_texts)
+```
+	- Load scikit-learn Naive Bayes model with: 
+```python
+model: NaiveBayesModel = data['model']
+predictions = model.predict(sample)
+```
+A comprehensive example is provided in `test_load.py`, which also provides the classification prediction ability using scikit-learn libraries.
 
 # Testing files if you are interested...
 This part simply documented the approaches that I have implemented in a Notebook format. They are now used for testing purpose, but if you are interested on how the TF-IDF and Naive Bayes mechanics work, you may check them out in the `model5/Test Notebooks` directory.
