@@ -38,7 +38,7 @@ print(res)
 
 ## Using the TF-IDF with Naive Bayes Package for **Loading the Saved Model and Prediction**
 
-Another function in `tfidf_nb.py` is `load_saved_model()`. As the name suggest, it load the saved model from a directory into the program for inferencing.
+Another function in `tfidf_nb.py` is `load_saved_model()`. As the name suggest, it loads the saved model from a directory into the program for inferencing.
 
 If the `save_model_path` argument in `train_evaluate()` is set to a valid directory, the models will be saved locally. Specifically, the package saves `scikit_model.joblib` and `vectorizer.joblib` under the provided folder.
 
@@ -46,7 +46,7 @@ If the `save_model_path` argument in `train_evaluate()` is set to a valid direct
 1. You may run the file `test_load.py` from the repo root directory to test the model-loading function:
 
 ```bash
-python -m model5.package.test_train
+python -m model5.package.test_load
 ```
 
 2. Sample Usage:
@@ -63,6 +63,9 @@ print(data)
 3. You may access the models using `data['model']` and `data['embedding']`. They are in a model object type already, which mean you can directly use the models with their respective libraries. To load TF-IDF embedding model and scikit-learn Naive Bayes model, you may use the following:
 
 ```python
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+
 vectorizer: TfidfVectorizer = data['embedding']
 sample = vectorizer.transform(list_of_sample_texts)
 model: NaiveBayesModel = data['model']
