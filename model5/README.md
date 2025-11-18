@@ -32,8 +32,9 @@ print(res)
 ```
 
 ### Notes:
-- The package is run from the root directory so the `util` package is importable.
-- Some verbose and warning from PySpark may appear in the console output. They are normal and no need to be worried about.
+The package is run from the root directory so the `util` package is importable.
+
+Some verbose and warning from PySpark may appear in the console output. They are normal and no need to be worried about.
 
 ## Using the TF-IDF with Naive Bayes Package for **Evaluation on Saved Models**
 
@@ -83,8 +84,9 @@ print(data)
 ```
 
 ### Notes:
-	- You may access the models using `data['model']` and `data['embedding']`. They are in a model object type already, which mean you can directly use the models with their respective libraries. 
-	- To utilize the loaded TF-IDF embedding model and scikit-learn Naive Bayes model, you may use the following:
+You may access the models using `data['model']` and `data['embedding']`. They are in a model object type already, which mean you can directly use the models with their respective libraries. 
+
+To utilize the loaded TF-IDF embedding model and scikit-learn Naive Bayes model, you may use the following:
 
 ```python
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -95,8 +97,7 @@ sample = vectorizer.transform(list_of_sample_texts)
 model: NaiveBayesModel = data['model']
 predictions = model.predict(sample)
 ```
-
-	- A comprehensive example is provided in `test_load.py`, which also provides the classification prediction ability using scikit-learn libraries.
+A comprehensive example is provided in `test_load.py`, which also provides the classification prediction ability using scikit-learn libraries.
 
 # Testing files if you are interested...
 The folder `test-notebooks` contains the approaches that I have implemented in a Jupyter Notebook format. They are not used in the main implementation, but rather used for testing purpose. But if you are interested on how the TF-IDF and Naive Bayes mechanics work, you may check them out in that directory.
