@@ -10,14 +10,13 @@ Author: *Marcus KWAN TH*<br>
 
 A function to run TF-IDF + Naive Bayes and return the accuracy with loss metrics are provided by `train_model()`, within a package `model.py` under `package` folder.
 
-### Procedures:
-1. Please run `test_train.py` from the repository root directory:
+Please run `test_train.py` from the repository root directory to see how it works:
 
 ```bash
 python -m model5.package.test_train
 ```
 
-2. Sample Usage:
+### Sample Usage:
 
 ```python
 from model5.package import train_model
@@ -32,13 +31,21 @@ res = train_model(
 print(res)
 ```
 
-3. Notes:
+### Notes:
 - The package is run from the root directory so the `util` package is importable.
 - Some verbose and warning from PySpark may appear in the console output. They are normal and no need to be worried about.
 
 ## Using the TF-IDF with Naive Bayes Package for **Evaluation on Saved Models**
 
 Another function in `model.py` is `evaluate_saved_model()`. As the name suggest, it loads the saved model from a directory then perform eveluations with accuracy and loss metrics.
+
+Please run `test_load.py` from the repository root directory to see the result:
+
+```bash
+python -m model5.package.test_load
+```
+
+### Sample Usage:
 
 ```python
     eval = evaluate_saved_model(
@@ -48,7 +55,8 @@ Another function in `model.py` is `evaluate_saved_model()`. As the name suggest,
     )
 	print(eval)
 ```
-You may access the evaluated metrics using `eval['train']` and `data['test']`. To access the accuracy and loss metric separately, append `[accuracy]` or `[loss]`. An example is provided in the `test_load.py`.
+### Notes:
+	- You may access the evaluated metrics using `eval['train']` and `data['test']`. To access the accuracy and loss metric separately, append `['accuracy']` or `['loss']`. An example is provided in the `test_load.py`.
 
 ## Using the TF-IDF with Naive Bayes Package for **Loading the Saved Model**
 
@@ -56,7 +64,13 @@ Another function in `model.py` is `load_saved_model()`. As the name suggest, it 
 
 If the `save_model_path` argument in `train_evaluate()` is set to a valid directory, the models will be saved locally. Specifically, the package saves `scikit_model.joblib` and `vectorizer.joblib` under the provided folder.
 
-Sample Usage:
+Please run `test_load.py` from the repository root directory to see the result:
+
+```bash
+python -m model5.package.test_load
+```
+
+### Sample Usage:
 
 ```python
 from model5.package import load_saved_model
@@ -67,7 +81,9 @@ data = load_saved_model(
 print(data)
 ```
 
-You may access the models using `data['model']` and `data['embedding']`. They are in a model object type already, which mean you can directly use the models with their respective libraries. To utilize the loaded TF-IDF embedding model and scikit-learn Naive Bayes model, you may use the following:
+### Notes:
+	- You may access the models using `data['model']` and `data['embedding']`. They are in a model object type already, which mean you can directly use the models with their respective libraries. 
+	- To utilize the loaded TF-IDF embedding model and scikit-learn Naive Bayes model, you may use the following:
 
 ```python
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -79,7 +95,7 @@ model: NaiveBayesModel = data['model']
 predictions = model.predict(sample)
 ```
 
-A comprehensive example is provided in `test_load.py`, which also provides the classification prediction ability using scikit-learn libraries.
+	- A comprehensive example is provided in `test_load.py`, which also provides the classification prediction ability using scikit-learn libraries.
 
 # Testing files if you are interested...
 The folder `test-notebooks` contains the approaches that I have implemented in a Jupyter Notebook format. They are not used in the main implementation, but rather used for testing purpose. But if you are interested on how the TF-IDF and Naive Bayes mechanics work, you may check them out in that directory.
