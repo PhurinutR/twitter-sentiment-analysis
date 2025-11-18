@@ -9,7 +9,7 @@ import os
 import sys
 import pprint
 
-# Import util.preprocessing. If import fails, add root path to sys.path
+# Import model 5's package. If import fails, add root path to sys.path
 try:
     from model5.package import train_evaluate
 except Exception:
