@@ -1,6 +1,6 @@
 # Twitter-sentiment-analysis
 
-## Getting start
+## Getting Started
 After you cloned this GitHub repository, please run the following command to start playing with this project.
 
 ```bash
@@ -16,5 +16,15 @@ Then, install PyTorch that's appropriate for your machine. If you are on Linux y
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130
 ```
 
-### Large Model Weight Installation
+### Large Model Weight Installation Guides
 1. For model1 which is BERT + DNN (ResNet), please see this [model 1 installation guideline](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model1).
+
+2. *TBA*
+
+3. For model3 which is Doc2Vec + Random Forest, please see the [guide in model 3](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model3).
+
+4. *TBA*
+
+5. For model5 which is TF-IDF + Naive Bayes, please follow the [implementation guide in model 5](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model5).
+
+6. *TBA*

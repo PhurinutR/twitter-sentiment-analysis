@@ -1,15 +1,16 @@
-# Model 5 Implementation
+# Model 5 Implementation Guide
 Core architecture: **TF-IDF** embedding model with **Naive Bayes** classifier model<br>
 Author: *Marcus KWAN TH*<br>
 
-## Prerequisite:
+## Prerequisite
 1. Clone this GitHub repository into the local PC.
 2. Run the commands provided in the "Getting Started" guide in the home page to install necessary libraries.
 
 ## Using the TF-IDF with Naive Bayes Package for **Training and Evaluation**
 
-A small package `tfidf_nb.py` is provided at `model5/package` to run TF-IDF + Naive Bayes and return accuracy and loss metrics.
+A function to run TF-IDF + Naive Bayes and return the accuracy with loss metrics are provided by `train_evaluate()`, within a package `tfidf_nb.py` under `model5/package`.
 
+### Procedures:
 1. Please run `test_train.py` from the repository root directory:
 
 ```bash
@@ -41,12 +42,15 @@ Another function in `tfidf_nb.py` is `load_saved_model()`. As the name suggest, 
 
 If the `save_model_path` argument in `train_evaluate()` is set to a valid directory, the models will be saved locally. Specifically, the package saves `scikit_model.joblib` and `vectorizer.joblib` under the provided folder.
 
+### Procedures:
 1. You may run the file `test_load.py` from the repo root directory to test the model-loading function:
+
 ```bash
 python -m model5.package.test_train
 ```
 
 2. Sample Usage:
+
 ```python
 from model5.package import load_saved_model
 
@@ -56,27 +60,27 @@ data = load_saved_model(
 print(data)
 ```
 
-3. You may access the models using `data['model']` and `data['embedding']`. They are in a model object type already, which mean you can directly use the models with their respective libraries.
-	- Load TF-IDF embedding model with:
+3. You may access the models using `data['model']` and `data['embedding']`. They are in a model object type already, which mean you can directly use the models with their respective libraries. To load TF-IDF embedding model and scikit-learn Naive Bayes model, you may use the following:
+
 ```python
 vectorizer: TfidfVectorizer = data['embedding']
 sample = vectorizer.transform(list_of_sample_texts)
-```
-	- Load scikit-learn Naive Bayes model with: 
-```python
 model: NaiveBayesModel = data['model']
 predictions = model.predict(sample)
 ```
+
 A comprehensive example is provided in `test_load.py`, which also provides the classification prediction ability using scikit-learn libraries.
 
 # Testing files if you are interested...
 This part simply documented the approaches that I have implemented in a Notebook format. They are now used for testing purpose, but if you are interested on how the TF-IDF and Naive Bayes mechanics work, you may check them out in the `model5/Test Notebooks` directory.
 ## Using TF-IDF with Naive Bayes Jupyter Notebook
 ⚠️ Note: Before running the notebook, please ensure the file `util.zip` is present in the root directory. If not, zip the util folder using the following command: 
+
 ```bash
 cd twitter-sentiment-analysis
 zip -r util.zip util
 ```
+
 This step is necessary for PySpark to access the util package during distributed processing in the Notebook files.
 
 1. Run `tfidf_nb_program.ipynb` from the `Test Notebook` folder.
