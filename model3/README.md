@@ -26,7 +26,7 @@ joblib
 ### 1. Train the Model
 
 ```bash
-python train_word2vec_rf_tuned.py
+python train_word2vec_rf.py
 ```
 
 - Trains Word2Vec on the large pre-train data  
@@ -39,7 +39,7 @@ python train_word2vec_rf_tuned.py
 ### 2. Run Inference on the Test Set
 
 ```bash
-python model3/run_final.py
+python run_word2vec_rf.py
 ```
 
 Loads the saved models and evaluates on `testdata7.csv`.  
@@ -77,4 +77,24 @@ embeddings = np.array([
 ])
 new_df["Predicted_Sentiment"] = clf.predict(embeddings)
 print(new_df)
+```
+```
+======================================================================
+BEST HYPERPARAMETERS FOUND
+======================================================================
+Word2Vec Parameters:
+   • vector_size : 200
+   • window      : 10
+   • sg          : 1
+   • epochs      : 30
+   • negative    : 10
+
+Random Forest Parameters:
+   • class_weight: balanced
+   • max_depth   : 12
+   • min_samples_leaf: 2
+   • n_estimators: 300
+
+Best CV macro-F1 : 0.6585
+Final Test macro-F1 : 0.8247
 ```
