@@ -97,7 +97,7 @@ def train_model(train_csv: str, save_model_path: Optional[str] = None, tfidf_par
     print("Model training completed.\n")
 
 
-def evaluate_saved_model(models: Dict, train_csv: Optional[str] = None, test_csv: Optional[str] = None, text_column: str = "Phrase", sentiment_column: str = "Sentiment"):
+def evaluate_saved_model(models: Dict, train_csv: Optional[str] = None, test_csv: Optional[str] = None):
     """
     Load saved embedding and classifier models and evaluate on provided CSV paths.
 
@@ -105,8 +105,6 @@ def evaluate_saved_model(models: Dict, train_csv: Optional[str] = None, test_csv
         models: Dictionary containing the loaded embedding and classifier models. Required.
         train_csv: Path to training CSV file. If provided, evaluate on training data. Optional, default to None.
         test_csv: Path to testing CSV file. If provided, evaluate on testing data. Optional, default to None.
-        text_column: Name of the text column in the CSV files. Default is "Phrase".
-        sentiment_column: Name of the sentiment/label column in the CSV files. Default is "Sentiment".
 
     Returns:
         A dictionary with keys 'train' and/or 'test' mapping to metric dictionaries containing 'accuracy' and 'loss'.
@@ -116,6 +114,9 @@ def evaluate_saved_model(models: Dict, train_csv: Optional[str] = None, test_csv
 
     model = models['model']
     vectorizer = models['embedding']
+
+    text_column = "Phrase"
+    sentiment_column = "Sentiment"
 
     results = {}
     if train_csv:
