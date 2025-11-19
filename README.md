@@ -27,4 +27,4 @@ pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130
 
 5. For model5 which is TF-IDF + Naive Bayes, please follow the [implementation guide in model 5](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model5).
 
-6. *TBA*
+6. For model6 which is DFIDF + Logistic Regression / Word2Vec + SVM / DFIDF + SVM, refer to the [guide in model 6](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model6).
