@@ -1,17 +1,14 @@
+# Twitter Sentiment Analysis with Word2Vec + Random Forest
 
-# Twitter Sentiment Analysis with Doc2Vec + Random Forest
-
-A complete pipeline for Twitter/X sentiment classification using **Doc2Vec** for document embeddings and **Random Forest** as the classifier. The project leverages a large labeled pre-training set (~59k tweets) and a smaller high-quality training set (~600 tweets) to achieve robust performance.
+A complete pipeline for Twitter/X sentiment classification using **Word2Vec** for word embeddings (averaged into sentence vectors) and **Random Forest** as the classifier. The project leverages a large labeled pre-training set (~59k tweets) and a smaller high-quality training set (~600 tweets) to achieve robust performance.
 
 ## Overview
 
 1. **Bigram detection** with Gensim Phrases → better phrase handling  
-2. **Doc2Vec** trained on the large pre-train corpus (unsupervised + supervised)  
+2. **Word2Vec** trained on the large pre-train corpus (unsupervised + supervised)  
 3. **Random Forest** pretrained on the large labeled data → stable hyperparameters  
 4. **Finetuning** of the Random Forest on a combination of large + small data (with higher weight on the small set)  
 5. Models saved for easy inference
-
-
 
 ## Requirements
 
@@ -22,72 +19,27 @@ numpy
 gensim
 scikit-learn
 joblib
-huggingface_hub
 ```
-
-
 
 ## Usage
-#######!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!call train_best.py to get the best model!
-you can also use from huggingface: ```https://huggingface.co/chrislhg/doc2vec-rf```
-1) download the model files:
-```python
-from huggingface_hub import hf_hub_download
 
-# Replace with the appropriate file names
-doc2vec_model_path = hf_hub_download(repo_id="chrislhg/doc2vec-rf", filename="best_doc2vec.model")
-classifier_model_path = hf_hub_download(repo_id="chrislhg/doc2vec-rf", filename="best_classifier.pkl")
-bigram_phraser_path = hf_hub_download(repo_id="chrislhg/doc2vec-rf", filename="bigram_phraser.model")
-```
-2) load the models
-   ```python
-    import joblib
-    from gensim.models import Doc2Vec
-    
-    # Load the models
-    doc2vec_model = Doc2Vec.load(doc2vec_model_path)
-    clf = joblib.load(classifier_model_path)
-    bigram_phraser = joblib.load(bigram_phraser_path)
-   ```
-3) make prediction:
-```python
-import numpy as np
-
-def infer_and_predict(phrase):
-    # Preprocess phrase (assuming it's a string)
-    bigrammed_phrase = bigram_phraser[phrase.split()]
-    vector = doc2vec_model.infer_vector(bigrammed_phrase)
-    
-    # Make prediction
-    prediction = clf.predict([vector])
-    return prediction
-
-# Example usage
-result = infer_and_predict("Your sample text here")
-print("Predicted Sentiment:", result)
-```
-
-
-
-
-# Explanation of my code (no need to use if you just call the models)
 ### 1. Train the Model
 
 ```bash
-python model3/train_doc2vec_rf.py
+python train_word2vec_rf_tuned.py
 ```
 
-- Trains Doc2Vec on the large pre-train data  
-- Performs hyperparameter search for both Doc2Vec and Random Forest  
+- Trains Word2Vec on the large pre-train data  
+- Performs hyperparameter search for both Word2Vec and Random Forest  
 - Pre-trains RF on the large dataset  
 - Finetunes RF on large + small data (small data weighted higher)  
-- Saves everything to `saved_models/`  
+- Saves everything to `saved_models2/`  
 - Prints final test macro-F1 and classification report
 
 ### 2. Run Inference on the Test Set
 
 ```bash
-python model3/run_doc2vec_rf.py
+python model3/run_final.py
 ```
 
 Loads the saved models and evaluates on `testdata7.csv`.  
@@ -99,47 +51,30 @@ Uncomment the last lines if you want the full classification report.
 import joblib
 import numpy as np
 import pandas as pd
-from gensim.models.doc2vec import Doc2Vec
+from gensim.models import Word2Vec
 from gensim.models.phrases import Phraser
 
 # Load models
-doc2vec = Doc2Vec.load("saved_models/best_doc2vec.model")
-clf     = joblib.load("saved_models/best_classifier.pkl")
-phraser = Phraser.load("saved_models/bigram_phraser.model")
+w2v = Word2Vec.load("saved_models2/word2vec_best.model")
+clf = joblib.load("saved_models2/best_classifier.pkl")
+phraser = Phraser.load("saved_models2/bigram_phraser.model")
 
 # Single prediction
 text = "I love this movie so much!"
 tokens = phraser[text.split()]
-vector = doc2vec.infer_vector(tokens)
-pred   = clf.predict(np.array([vector]))[0]
+vecs = [w2v.wv[word] for word in tokens if word in w2v.wv]
+vector = np.mean(vecs, axis=0) if vecs else np.zeros(w2v.vector_size)
+pred = clf.predict(np.array([vector]))[0]
 print("Predicted sentiment:", pred)
 
 # Batch prediction
 new_df = pd.DataFrame({"Phrase": ["great day", "terrible service", "ok I guess"]})
 embeddings = np.array([
-    doc2vec.infer_vector(phraser[row["Phrase"].split()])
+    np.mean([w2v.wv[t] for t in phraser[row["Phrase"].split()] if t in w2v.wv], axis=0)
+    if any(t in w2v.wv for t in phraser[row["Phrase"].split()])
+    else np.zeros(w2v.vector_size)
     for _, row in new_df.iterrows()
 ])
 new_df["Predicted_Sentiment"] = clf.predict(embeddings)
 print(new_df)
-```
-```
-==================================================
-BEST HYPERPARAMETERS SELECTED
-==================================================
-Best Doc2Vec configuration:
-  → vector_size : 150
-  → epochs      : 40
-  → dm          : False
-  → window      : 8
-  → min_count   : 2
-  → alpha       : 0.025
-  → CV macro-F1 on pretrain : 0.5594
-
-Best Random Forest parameters:
-  → class_weight    : balanced
-  → max_depth       : 12
-  → min_samples_leaf: 4
-  → n_estimators    : 300
-==================================================
 ```
