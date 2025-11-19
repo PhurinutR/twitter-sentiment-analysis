@@ -8,9 +8,9 @@ Core architecture: **TF-IDF** embedding model with **Naive Bayes** classifier mo
 1. Clone this GitHub repository into the local PC.
 2. Run the commands provided in the "Getting Started" guide in the home page to install necessary libraries.
 
-## Using the TF-IDF with Naive Bayes Package for **Training and Evaluation**
+## Using the TF-IDF with Naive Bayes Package for **Training**
 
-A function to run TF-IDF + Naive Bayes and return the accuracy with loss metrics are provided by `train_model()`, within a package `model.py` under `package` folder.
+A function to train TF-IDF + Naive Bayes and return the accuracy with loss metrics are provided by `train_model()`, within a package `model.py` under `package` folder.
 
 Please run `test_train.py` from the repository root directory to see how it works:
 
@@ -23,15 +23,15 @@ python -m model5.package.test_train
 ```python
 from model5.package import train_model
 
-res = train_model(
+train_model(
 	'Twitter_data/traindata.csv',
-	'Twitter_data/testdata.csv',
     tfidf_parameters = {"min_df": 4, "max_df": 0.95, "ngram_range": (1, 2), "use_idf": True} # Optional: Sample paramters for TF-IDF embedding
     nb_parameters = {"alpha": 1.0}  # Optional: Sample parameters for scikit-learn's Naive Bayes classifier
 	save_model_path='model5/package/saved_models'  # Optional: persist embedding model and classifier model
 )
-print(res)
 ```
+
+This function will return nothing.
 
 ### Notes:
 The package is run from the root directory so the `util` package is importable.

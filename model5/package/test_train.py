@@ -20,26 +20,23 @@ except Exception:
 
 def main(): 
     # Modify these paths as needed
-    train_csv = "Twitter_data/pre_traindata7.csv" 
-    test_csv = "Twitter_data/testdata7.csv"
+    train_csv = "Twitter_data/traindata7.csv" 
 
     # Model saving directory (default saves to the model5/saved_models directory, set to None if you don't want to save models)
-    save_dir = "model5/saved_models_pretrain7"
+    # save_dir = "model5/saved_models"
+    save_dir = "model5/saved_models"
 
     # Sample dictionary of parameters for TF-IDF and Naive Bayes
     tfidf_parameters = {"min_df": 4, "max_df": 0.95, "ngram_range": (1, 2)} # Fine-tuning of embedding model
     nb_parameters = {"alpha": 1.0}  # Example for scikit-learn MultinomialNB, fine-turning
 
     # playaround with this function!
-    result = train_model(
+    train_model(
         train_csv, 
-        test_csv, 
         save_model_path=save_dir, 
         tfidf_params=tfidf_parameters, 
         nb_params=nb_parameters
     )
-
-    pprint.pprint(result)
 
 if __name__ == '__main__':
     main()

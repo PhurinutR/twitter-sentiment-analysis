@@ -49,13 +49,12 @@ def _evaluate_with_model(model, vectorizer, documents, labels) -> Tuple[float, f
     return acc, loss
 
 # Callable Functions
-def train_model(train_csv: str, test_csv: str, save_model_path: Optional[str] = None, tfidf_params: Optional[dict] = None, nb_params: Optional[dict] = None):
+def train_model(train_csv: str, save_model_path: Optional[str] = None, tfidf_params: Optional[dict] = None, nb_params: Optional[dict] = None):
     """
-    Fit TF-IDF on training data and train a Naive Bayes classifier, then evaluate it.
+    Fit TF-IDF on training data and train a Naive Bayes classifier.
 
     Args:
         train_csv: Path to training CSV file. Required.
-        test_csv: Path to testing CSV file. Required.
         save_model_path: If provided, save model and vectorizer objects to this directory. Optional, default to None.
         tfidf_params: Dict of params passed to `TfidfVectorizer`. Optional. If None, default params are used.
         nb_params: Dict of params passed to Naive Bayes model (scikit-learn's MultinomialNB). Optional. If None, default params are used.
@@ -64,15 +63,6 @@ def train_model(train_csv: str, test_csv: str, save_model_path: Optional[str] = 
         - For TF-IDF, `tfidf_params` can include: 'min_df', 'max_df', 'ngram_range', 'use_idf', etc.
         - For scikit-learn MultinomialNB, `nb_params` can include: any valid parameters for `MultinomialNB`.
         - To save models, ensure `save_model_path` is set to a valid directory path.
-
-    Returns:
-        dict: {
-            'train_accuracy': float,
-            'test_accuracy': float,
-            'train_log_loss': float,
-            'test_log_loss': float,
-        }
-
     """
     print("\nStarted TF-IDF + Naive Bayes training...\n")
 
@@ -83,32 +73,16 @@ def train_model(train_csv: str, test_csv: str, save_model_path: Optional[str] = 
 
     # Load and preprocess
     train_spark_df = load_and_preprocess_data(train_csv, text_column, sentiment_column)
-    test_spark_df = load_and_preprocess_data(test_csv, text_column, sentiment_column)
-
     train_documents, train_labels = _extract_docs_labels(train_spark_df, text_column, sentiment_column)
-    test_documents, test_labels = _extract_docs_labels(test_spark_df, text_column, sentiment_column)
 
-    # Vectorize
+    # Train TF-IDF
     tfidf = TfidfVectorizer(**tfidf_params)
     X_train = tfidf.fit_transform(train_documents)
-    X_test = tfidf.transform(test_documents)
 
-    # Train
+    # Train Naive Bayes
     model = MultinomialNB(**nb_params)
     model.fit(X_train, train_labels)
 
-    # Metrics
-    train_acc, train_loss = _evaluate_with_model(model, tfidf, train_documents, train_labels)
-    test_acc, test_loss = _evaluate_with_model(model, tfidf, test_documents, test_labels)
-
-    metrics = {
-        "train_accuracy": train_acc,
-        "test_accuracy": test_acc,
-        "train_log_loss": train_loss,
-        "test_log_loss": test_loss,
-    }
-
-    saved_paths = {}
     if save_model_path:
         final_path = os.path.join(save_model_path, "scikit")
         os.makedirs(final_path, exist_ok=True)
@@ -120,7 +94,7 @@ def train_model(train_csv: str, test_csv: str, save_model_path: Optional[str] = 
         except Exception as e:
             print(f"saving failed: {e}")
 
-    return metrics
+    print("Model training completed.\n")
 
 
 def evaluate_saved_model(models: Dict, train_csv: Optional[str] = None, test_csv: Optional[str] = None, text_column: str = "Phrase", sentiment_column: str = "Sentiment"):
