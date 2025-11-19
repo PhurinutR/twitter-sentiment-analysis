@@ -1,3 +1,4 @@
-{"embedding_dim": 4500, "hidden_dim": 256, "n_layers": 3, "bidirectional": true, "dropout": 0.7, "pad_idx": 1, "vocab_size": 33270, "output_dim": 4}
+{"embedding_dim": 2700, "hidden_dim": 256, "n_layers": 2, "bidirectional": true, "dropout": 0.5, "pad_idx": 1, "vocab_size": 33270, "output_dim": 4}
+
 
 

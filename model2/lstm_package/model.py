@@ -245,7 +245,10 @@ def load_lstm(run_dir: str):
 
     # load fields
     fields_path = os.path.join(run_dir, 'fields.pth')
+
     label_field_path = os.path.join(run_dir, 'label_field.pth')
+
+
     if not os.path.exists(fields_path) or not os.path.exists(label_field_path):
         raise FileNotFoundError('Saved Fields not found in run_dir')
     TEXT = torch.load(fields_path,weights_only=False)
