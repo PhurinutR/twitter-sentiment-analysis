@@ -38,30 +38,6 @@ The package is run from the root directory so the `util` package is importable.
 
 Some verbose and warning from PySpark may appear in the console output. They are normal and no need to be worried about.
 
-## Using the TF-IDF with Naive Bayes Package for **Evaluation on Saved Models**
-
-Another function in `model.py` is `evaluate_saved_model()`. As the name suggest, it loads the saved model from a directory then perform eveluations with accuracy and loss metrics.
-
-Please run `test_load.py` from the repository root directory to see the result:
-
-```bash
-python -m model5.package.test_load
-```
-
-### Sample Usage:
-
-```python
-    eval = evaluate_saved_model(
-        saved_dir='model5/saved_model', 			# Required.
-        train_csv='Twitter_data/traindata.csv', 	# Optional, no training result will be returned if set to None.
-        test_csv='Twitter_data/testdata.csv'		# Optional, no testing result will be returned if set to None.
-    )
-	print(eval)
-```
-
-### Notes:
-You may access the evaluated metrics using `eval['train']` and `data['test']`. To access the accuracy and loss metric separately, append `['accuracy']` or `['loss']`. An example is provided in the `test_load.py`.
-
 ## Using the TF-IDF with Naive Bayes Package for **Loading the Saved Model**
 
 Another function in `model.py` is `load_saved_model()`. As the name suggest, it loads the saved model from a directory into the program for inferencing.
@@ -100,6 +76,30 @@ model: NaiveBayesModel = data['model']
 predictions = model.predict(sample)
 ```
 A comprehensive example is provided in `test_load.py`, which also provides the classification prediction ability using scikit-learn libraries.
+
+## Using the TF-IDF with Naive Bayes Package for **Evaluation on Saved Models**
+
+Another function in `model.py` is `evaluate_saved_model()`. As the name suggest, you pass a loaded models (in dictionary format) from `load_saved_model()` to this function, then it performs eveluations with accuracy and loss metrics.
+
+Please run `test_load.py` from the repository root directory to see the result:
+
+```bash
+python -m model5.package.test_load
+```
+
+### Sample Usage:
+
+```python
+    eval = evaluate_saved_model(
+        models=data 			                    # Required, a dictionary initialized with load_saved_models()
+        train_csv='Twitter_data/traindata.csv', 	# Optional, no training result will be returned if set to None.
+        test_csv='Twitter_data/testdata.csv'		# Optional, no testing result will be returned if set to None.
+    )
+	print(eval)
+```
+
+### Notes:
+You may access the evaluated metrics using `eval['train']` and `data['test']`. To access the accuracy and loss metric separately, append `['accuracy']` or `['loss']`. An example is provided in the `test_load.py`.
 
 # Testing files if you are interested...
 The folder `test-notebooks` contains the approaches that I have implemented in a Jupyter Notebook format. They are not used in the main implementation, but rather used for testing purpose. But if you are interested on how the TF-IDF and Naive Bayes mechanics work, you may check them out in that directory.

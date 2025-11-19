@@ -123,12 +123,12 @@ def train_model(train_csv: str, test_csv: str, save_model_path: Optional[str] = 
     return metrics
 
 
-def evaluate_saved_model(saved_dir: str, train_csv: Optional[str] = None, test_csv: Optional[str] = None, text_column: str = "Phrase", sentiment_column: str = "Sentiment"):
+def evaluate_saved_model(models: Dict, train_csv: Optional[str] = None, test_csv: Optional[str] = None, text_column: str = "Phrase", sentiment_column: str = "Sentiment"):
     """
     Load saved embedding and classifier models and evaluate on provided CSV paths.
 
     Args:
-        saved_dir: Directory where the TF-IDF embedding and Naive Bayes classifier models are saved. Required.
+        models: Dictionary containing the loaded embedding and classifier models. Required.
         train_csv: Path to training CSV file. If provided, evaluate on training data. Optional, default to None.
         test_csv: Path to testing CSV file. If provided, evaluate on testing data. Optional, default to None.
         text_column: Name of the text column in the CSV files. Default is "Phrase".
@@ -137,12 +137,11 @@ def evaluate_saved_model(saved_dir: str, train_csv: Optional[str] = None, test_c
     Returns:
         A dictionary with keys 'train' and/or 'test' mapping to metric dictionaries containing 'accuracy' and 'loss'.
     """
-    loaded = load_saved_model(saved_dir)
-    if not loaded or loaded.get('model') is None or loaded.get('embedding') is None:
-        raise FileNotFoundError(f"No saved scikit model/vectorizer found in {saved_dir}")
+    if not models or models.get('model') is None or models.get('embedding') is None:
+        raise FileNotFoundError(f"No saved scikit model/vectorizer found in provided models dictionary")
 
-    model = loaded['model']
-    vectorizer = loaded['embedding']
+    model = models['model']
+    vectorizer = models['embedding']
 
     results = {}
     if train_csv:
@@ -198,8 +197,6 @@ def load_saved_model(saved_dir: str):
             result.update({"embedding": embed, "model": model})
             return result
         except Exception as e:
-            print(f"failed to load scikit-learn files: {e}")
-            return result
+            raise FileNotFoundError(f"Failed to load scikit-learn files: {e}")
 
-    print("No known model files found in provided directory")
-    return None
+    raise FileNotFoundError(f"No saved scikit model/vectorizer found in provided directory")

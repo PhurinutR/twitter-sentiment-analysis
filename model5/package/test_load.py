@@ -23,22 +23,6 @@ def main():
     save_dir = "model5/saved_models_pretrain7" 
 
     """
-    Example usage of evaluating a saved TF-IDF embedding and Naive Bayes classifier model.
-    """
-    # Specify the training and testing data CSV files
-    train_csv = "Twitter_data/pre_traindata7.csv"
-    test_csv = "Twitter_data/testdata7.csv"
-
-    # Play around with this function!
-    eval = evaluate_saved_model(
-        saved_dir=save_dir, 
-        train_csv=train_csv, 
-        test_csv=test_csv
-    )
-    print("\nEvaluation Results:")
-    pprint.pprint(eval)
-
-    """
     Example usage of loading a saved TF-IDF embedding and Naive Bayes classifier model.
     """
     # Play around with this function!
@@ -49,6 +33,22 @@ def main():
     pprint.pprint(data)
     print(type(data['embedding']))
     print(type(data['model']))
+    
+    """
+    Example usage of evaluating a saved TF-IDF embedding and Naive Bayes classifier model.
+    """
+    # Specify the training and testing data CSV files
+    train_csv = "Twitter_data/pre_traindata7.csv"
+    test_csv = "Twitter_data/testdata7.csv"
+
+    # Play around with this function!
+    eval = evaluate_saved_model(
+        models=data,            # pass in the loaded models
+        train_csv=train_csv, 
+        test_csv=test_csv
+    )
+    print("\nEvaluation Results:")
+    pprint.pprint(eval)
 
     """
     Example usage of using the loaded models, you can do something like this:
