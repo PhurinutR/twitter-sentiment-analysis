@@ -1,154 +1,149 @@
-# Model 4 Implementation Guide  
+# **Model 4 Implementation Guide**
+
 Author: So Ching Hang
 
-Core Architecture: **CountVectorizer text embedding model with Decision Tree classifier**
+Core Architecture: CountVectorizer embedding model with Decision Tree classifier model
 
----
 
-## Prerequisite
+## **Prerequisites**
 
-1. Clone this GitHub repository into the local PC.  
-2. Run the commands provided in the "Getting Started" guide on the home page to install the necessary Python libraries.  
-3. Ensure the folder structure of the package remains unchanged so that relative imports work properly.
-
----
-
-## Using the CountVectorizer + Decision Tree Package for Training
-
-A function to train **CountVectorizer + Decision Tree** and return evaluation metrics is provided by  
-`train_model()`, located inside `decision_tree_model.py` under the package folder.
-
-To see how it works, please run `test_train.py` from the repository root directory:
+1. Clone this GitHub repository into your local machine.
+2. Install required Python libraries:
 
 ```bash
-python -m textmodels.test_train
+pip install scikit-learn pandas joblib
 ```
 
-### Sample Usage
+3. Ensure you run Python commands **from the repository root**, so the package is importable.
+
+---
+
+# **Using the CountVectorizer + Decision Tree Package for Training**
+
+The main training function is inside:
+
+```
+model4/package/decision_tree_model.py
+```
+
+The class you will use is:
 
 ```python
-from textmodels import DecisionTreeSentiment
-from textmodels import load_dataset
+DecisionTreeSentiment
+```
 
-# Load dataset
+A working demo script is provided:
+
+```
+python -m model4.package.test_train
+```
+
+### **Sample Usage**
+
+```python
+from model4.package import DecisionTreeSentiment
+from model4.package import load_dataset
+
+# Load CSV data
 X_train, y_train, X_test, y_test = load_dataset(
-    'data/traindata.csv',
-    'data/testdata.csv'
+    'Twitter_data/traindata.csv',
+    'Twitter_data/testdata.csv'
 )
 
-# Initialize model
+# Create model
 model = DecisionTreeSentiment()
 
-# Train model with optional hyperparameters
-model.train(
-    X_train, 
-    y_train,
-    params={
-        "vec__ngram_range": [(1,1), (1,2)],
-        "vec__min_df": [2],
-        "clf__max_depth": [10, 15, 20],
-        "clf__criterion": ["entropy"]
-    }
-)
+# Train model using internal hyperparameter tuning
+best_params, best_cv_score = model.train(X_train, y_train)
 
-# Evaluate the model
+# Evaluate on test set
 acc, error = model.evaluate(X_test, y_test)
+print("Accuracy:", acc)
+print("Error:", error)
 ```
 
-This function will return:
+This function performs:
 
-- Best hyperparameters found  
-- Best cross-validation accuracy  
+* CountVectorizer construction
+* Decision Tree training
+* Optional GridSearchCV hyperparameter tuning
+* Reporting CV accuracy
 
-And the evaluate function will return:
-
-- Test accuracy  
-- Test error  
+Nothing is returned except the best parameters and cross-validation score.
 
 ---
 
-## Notes
+#  **Saving and Loading the Decision Tree Model**
 
-- The package must be executed from the **root directory** so the `textmodels` package can be imported correctly.
-- Training may display verbose logs from scikit-learn. These are normal and should not be treated as errors.
+Inside `decision_tree_model.py`, two functions support model persistence:
+
+* The package saves:
+
+  * `vectorizer.joblib`
+  * `scikit_tree_model.joblib`
+
+Run the test example:
+
+```
+python -m model4.package.test_load
+```
 
 ---
 
-## Using the CountVectorizer + Decision Tree Package for Loading Saved Models
-
-Another function in `decision_tree_model.py` is `load_saved_model()`.  
-As the name suggests, it loads previously saved embedding and classifier models into memory for inference.
-
-If the `save_model_path` argument in `train()` is set to a valid folder, the package will save:
-
-- `vectorizer.joblib`  
-- `scikit_model.joblib`
-
-To see the working demo, run:
-
-```bash
-python -m textmodels.test_load
-```
-
-### Sample Usage
+## **Sample Usage: Load Saved Model**
 
 ```python
-from textmodels import load_saved_model
+from model4.package import load_saved_model
 
 data = load_saved_model(
-    saved_dir='textmodels/saved_models'  # Required
+    saved_dir='model4/saved_model'
 )
 
 print(data)
 ```
 
-### Notes
+You will receive a dictionary:
 
-You may access the loaded models via:
+```python
+{
+    "model": <DecisionTreeClassifier object>,
+    "embedding": <CountVectorizer object>
+}
+```
+
+### Using the loaded embedding + model
 
 ```python
 vectorizer = data['embedding']
 model = data['model']
+
+sample = vectorizer.transform(["I love this product!", "Terrible service."])
+
+predictions = model.predict(sample)
+print(predictions)
 ```
 
-Both objects are **fully usable scikit-learn model objects**.
-
-To perform inference:
-
-```python
-sample = vectorizer.transform(["this product is good"])
-prediction = model.predict(sample)
-```
-
-A complete example is provided in `test_load.py`.
+A full example is provided in `test_load.py`.
 
 ---
 
-## Using the CountVectorizer + Decision Tree Package for Evaluation on Saved Models
+# **Evaluating Saved Models**
 
-The function `evaluate_saved_model()` allows you to directly evaluate loaded models on training and testing datasets.
+The function `evaluate_saved_model()` lets you compute accuracy and loss on both training and test datasets using the **loaded** model.
 
-Run:
-
-```bash
-python -m textmodels.test_load
-```
-
-### Sample Usage
+Example:
 
 ```python
 eval = evaluate_saved_model(
-    models=data,                      # dictionary from load_saved_model()
-    train_csv='data/traindata.csv',   # Optional
-    test_csv='data/testdata.csv'      # Optional
+    models=data,
+    train_csv='Twitter_data/traindata.csv',
+    test_csv='Twitter_data/testdata.csv'
 )
 
 print(eval)
 ```
 
-### Notes
-
-You can access evaluation metrics via:
+You may access metrics through:
 
 ```python
 eval['train']['accuracy']
@@ -157,6 +152,8 @@ eval['test']['accuracy']
 eval['test']['loss']
 ```
 
-Examples of accuracy/loss extraction are provided in `test_load.py`.
+A demonstration is also in:
 
-## End of README
+```
+python -m model4.package.test_load
+```
