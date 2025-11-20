@@ -16,7 +16,7 @@ from typing import List
 import time
 import torch
 import torch.nn as nn
-
+from pathlib import Path
 # Use torchtext.legacy.data if it exists, otherwise torchtext.data
 try:
     # torchtext >= 0.9 exposes legacy.data
@@ -77,7 +77,7 @@ class LSTMClassifier(nn.Module):
     def forward(self, text, text_lengths):
         # text: [sentence_length, batch_size]
         embedded = self.dropout(self.embedding(text))
-        packed_embedded = nn.utils.rnn.pack_padded_sequence(embedded, text_lengths.to('cpu'))
+        packed_embedded = nn.utils.rnn.pack_padded_sequence(embedded, text_lengths.to('cpu'),enforce_sorted=False)
         packed_output, (hidden, cell) = self.rnn(packed_embedded)
         nn.utils.rnn.pad_packed_sequence(packed_output)
 
@@ -282,32 +282,114 @@ def load_lstm(run_dir: str):
     return {'model': model, 'TEXT': TEXT, 'LABEL': LABEL, 'config': config}
 
 
-def predict_sentiment(model: nn.Module, TEXT, texts: List[str]):
+# model2/lstm_package/model_inference.py
+
+
+
+# Define the LSTM-based model (same architecture as used in training)
+class LSTMClassifier2(nn.Module):
+    def __init__(self, vocab_size, embedding_dim, hidden_dim, output_dim, 
+                 n_layers, bidirectional, dropout, pad_idx):
+        super().__init__()
+        # Embedding layer (with padding index for PAD tokens)
+        self.embedding = nn.Embedding(vocab_size, embedding_dim, padding_idx=pad_idx)
+        # LSTM layer(s)
+        self.rnn = nn.LSTM(embedding_dim, hidden_dim, 
+                           num_layers=n_layers, 
+                           bidirectional=bidirectional, 
+                           dropout=dropout if n_layers > 1 else 0.0)
+        # Fully-connected layer (input doubled if bidirectional)
+        fc_input_dim = hidden_dim * 2 if bidirectional else hidden_dim
+        self.fc = nn.Linear(fc_input_dim, output_dim)
+        self.dropout = nn.Dropout(dropout)
+        self.bidirectional = bidirectional
+
+    def forward(self, text, text_lengths):
+        # text shape: [sentence_length, batch_size]
+        # text_lengths shape: [batch_size]
+        embedded = self.dropout(self.embedding(text))
+        # Pack sequence for efficient processing (uses CPU lengths for packing)
+        packed_embedded = nn.utils.rnn.pack_padded_sequence(embedded, text_lengths.to("cpu"))
+        packed_output, (hidden, cell) = self.rnn(packed_embedded)
+        # Unpack sequence (output tensor is not used further, only final hidden state is needed)
+        nn.utils.rnn.pad_packed_sequence(packed_output)
+        # hidden shape: [n_layers * num_directions, batch_size, hidden_dim]
+        if self.bidirectional:
+            # Concatenate the final forward and backward hidden states
+            hidden_combined = torch.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)
+        else:
+            # Use the final hidden state from the last layer (unidirectional case)
+            hidden_combined = hidden[-1, :, :]
+        # Apply dropout to the final hidden state and pass it through the fully connected layer
+        hidden_dropped = self.dropout(hidden_combined)
+        logits = self.fc(hidden_dropped)
+        return logits
+
+
+def predict_texts(text_list):
     """
-    Predict class indices for a list of raw text strings using model and TEXT Field.
-
-    Returns a list of predicted label indices (as in LABEL.vocab).
+    Predict sentiment labels for each text in text_list.
+    Returns a list of predictions (as integers 0, 1, 2, 3, etc.) in the same order as the input.
     """
 
-    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-    model = model.to(device)
+    # Device configuration (GPU if available, else CPU)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    model.eval()
-    tokenized = [TEXT.tokenize(t) for t in texts]
-    indices = [[TEXT.vocab.stoi.get(t, TEXT.vocab.stoi[TEXT.unk_token]) for t in toks] for toks in tokenized]
+    # Load the saved TorchText Field objects for text and labels
+    # ----------------------------------------------------------
+    PKG_DIR   = Path(__file__).resolve().parent       # .../lstm_package
+    ROOT_DIR  = PKG_DIR.parent                        # project root
+    SAVED_DIR = ROOT_DIR / "saved_best"
 
-    # Build batch tensors: pad sequences to max length
-    max_len = max(len(x) for x in indices)
-    batch = torch.zeros((max_len, len(indices)), dtype=torch.long)
-    lengths = torch.zeros((len(indices),), dtype=torch.long)
-    for i, seq in enumerate(indices):
-        lengths[i] = len(seq)
-        for j, idx in enumerate(seq):
-            batch[j, i] = idx
+    # Sanity-check: raise a helpful error if files are missing
+    required = ["fields.pth", "label_field.pth", "best_acc.pt"]
+    missing  = [f for f in required if not (SAVED_DIR / f).is_file()]
+    if missing:
+        raise FileNotFoundError(
+            f"Could not find {', '.join(missing)} in {SAVED_DIR}. "
+            "Make sure the saved weights are located there."
+        )
 
-    batch = batch.to(device)
-    lengths = lengths.to(device)
-    with torch.no_grad():
-        outputs = model(batch, lengths)
-        predictions = outputs.argmax(dim=1).cpu().tolist()
+    # ----------------------------------------------------------
+    # 3. Load TorchText Field objects
+    # ----------------------------------------------------------
+    TEXT  = torch.load(SAVED_DIR / "fields.pth",       map_location=device, weights_only = False)
+    LABEL = torch.load(SAVED_DIR / "label_field.pth",  map_location=device, weights_only = False)
+
+    # Reconstruct the model and load trained weights
+    INPUT_DIM = len(TEXT.vocab)
+    EMBEDDING_DIM = 2700   # must match the embedding dim used during training
+    HIDDEN_DIM = 256       # must match hidden dim from training
+    OUTPUT_DIM = len(LABEL.vocab)   # number of classes (e.g., 4 if labels 0-3)
+    N_LAYERS = 2           # number of LSTM layers as used in training
+    BIDIRECTIONAL = True   # should match training (True for bi-LSTM)
+    DROPOUT = 0.5          # dropout probability used in training
+    PAD_IDX = TEXT.vocab.stoi.get(TEXT.pad_token, 1)  # index of <pad> token (default to 1 if not found)
+
+    # Initialize model and load parameters
+    model = LSTMClassifier2(INPUT_DIM, EMBEDDING_DIM, HIDDEN_DIM, 
+                        OUTPUT_DIM, N_LAYERS, BIDIRECTIONAL, DROPOUT, pad_idx=PAD_IDX)
+    model.load_state_dict(torch.load(SAVED_DIR /"best_acc.pt", map_location=device))
+    model.to(device)
+    model.eval()  # set model to evaluation mode
+    predictions = []
+    for text in text_list:
+        # Tokenize the text using the same tokenizer as used in training
+        tokens = [tok.lower() for tok in TEXT.tokenize(text)]
+        # Convert tokens to indices using the vocabulary (use <unk> index for unseen words)
+        indices = [TEXT.vocab.stoi.get(tok, TEXT.vocab.stoi[TEXT.unk_token]) for tok in tokens]
+        # Create tensors for model input
+        text_tensor = torch.LongTensor(indices).unsqueeze(1).to(device)   # shape: [seq_len, batch_size=1]
+        text_length = torch.LongTensor([len(indices)]).to(device)         # shape: [batch_size=1]
+        # Get model prediction
+        with torch.no_grad():
+            logits = model(text_tensor, text_length)        # raw logits for each class
+            pred_idx = int(logits.argmax(dim=1).item())     # predicted class index (as int)
+        # If label vocabulary is numeric (e.g., "0", "1", ...), convert to int; otherwise use as is
+        pred_label_token = LABEL.vocab.itos[pred_idx]
+        try:
+            pred_label = int(pred_label_token)
+        except ValueError:
+            pred_label = pred_label_token
+        predictions.append(pred_label)
     return predictions
