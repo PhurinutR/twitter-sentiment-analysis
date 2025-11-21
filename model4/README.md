@@ -1,9 +1,8 @@
 # **Model 4 Implementation Guide**
 
-Author: So Ching Hang
+Author: *So Ching Hang*
 
 Core Architecture: CountVectorizer embedding model with Decision Tree classifier model
-
 
 ## **Prerequisites**
 

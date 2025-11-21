@@ -23,7 +23,7 @@ pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130
 
 3. For model3 which is Doc2Vec + Random Forest, please see the [guide in model 3](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model3).
 
-4. *TBA*
+4. For model4 which is CountVectorizer + Decision Tree, please refer to the [implementation guide in model 4](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model4).
 
 5. For model5 which is TF-IDF + Naive Bayes, please follow the [implementation guide in model 5](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model5).
 
