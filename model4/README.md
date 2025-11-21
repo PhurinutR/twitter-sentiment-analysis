@@ -13,19 +13,19 @@ Core Architecture: CountVectorizer embedding model with Decision Tree classifier
 pip install scikit-learn pandas joblib
 ```
 
-3. Ensure you run Python commands **from the repository root**, so the package is importable.
+3. Run all Python commands from the repository root directory, so the package imports correctly.
 
 ---
 
 # **Using the CountVectorizer + Decision Tree Package for Training**
 
-The main training function is inside:
+The main training class is located in:
 
 ```
 model4/package/decision_tree_model.py
 ```
 
-The class you will use is:
+The class you will use:
 
 ```python
 DecisionTreeSentiment
@@ -40,8 +40,7 @@ python -m model4.package.test_train
 ### **Sample Usage**
 
 ```python
-from model4.package import DecisionTreeSentiment
-from model4.package import load_dataset
+from model4.package import DecisionTreeSentiment, load_dataset, clean_text
 
 # Load CSV data
 X_train, y_train, X_test, y_test = load_dataset(
@@ -49,16 +48,21 @@ X_train, y_train, X_test, y_test = load_dataset(
     'Twitter_data/testdata.csv'
 )
 
+# Clean text
+X_train = X_train.apply(clean_text)
+X_test = X_test.apply(clean_text)
+
 # Create model
 model = DecisionTreeSentiment()
 
-# Train model using internal hyperparameter tuning
+# Train model with hyperparameter tuning (GridSearchCV)
 best_params, best_cv_score = model.train(X_train, y_train)
 
-# Evaluate on test set
-acc, error = model.evaluate(X_test, y_test)
-print("Accuracy:", acc)
+# Evaluate final model
+accuracy, error = model.evaluate(X_test, y_test)
+print("Accuracy:", accuracy)
 print("Error:", error)
+
 ```
 
 This function performs:
@@ -92,45 +96,37 @@ python -m model4.package.test_load
 ## **Sample Usage: Load Saved Model**
 
 ```python
-from model4.package import load_saved_model
+from model4.package.decision_tree_model import load_saved_model
 
-data = load_saved_model(
-    saved_dir='model4/saved_model'
-)
+data = load_saved_model(saved_dir='model4/saved_model')
 
-print(data)
 ```
 
-You will receive a dictionary:
+You will receive:
 
 ```python
 {
-    "model": <DecisionTreeClassifier object>,
-    "embedding": <CountVectorizer object>
+    "model": <Pipeline object>,         # vectorizer + classifier
+    "embedding": <CountVectorizer>      # extracted from pipeline
 }
 ```
 
-### Using the loaded embedding + model
+Example: Predict using the loaded model
 
 ```python
 vectorizer = data['embedding']
 model = data['model']
 
-sample = vectorizer.transform(["I love this product!", "Terrible service."])
+cleaned = ["i love this product", "terrible service"]
+pred = model.predict(cleaned)
+print(pred)
 
-predictions = model.predict(sample)
-print(predictions)
 ```
 
-A full example is provided in `test_load.py`.
-
----
 
 # **Evaluating Saved Models**
 
-The function `evaluate_saved_model()` lets you compute accuracy and loss on both training and test datasets using the **loaded** model.
-
-Example:
+If you implemented evaluate_saved_model() (not shown in your package but mentioned):
 
 ```python
 eval = evaluate_saved_model(
@@ -142,7 +138,7 @@ eval = evaluate_saved_model(
 print(eval)
 ```
 
-You may access metrics through:
+Access metrics:
 
 ```python
 eval['train']['accuracy']
