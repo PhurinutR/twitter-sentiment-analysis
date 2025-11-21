@@ -15,6 +15,7 @@ model1/final_model_finetuned
 /model7/.vector_cache/
 /model7/lstm/
 /model7/RNN/
+/model7/RNN2/
 /model7/saved_models/
 
 
