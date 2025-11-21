@@ -1,3 +1,5 @@
+import os
+import joblib
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV
@@ -9,6 +11,8 @@ class DecisionTreeSentiment:
     def __init__(self, random_state=42):
         self.random_state = random_state
         self.model = None
+        self.best_params = None
+        self.best_cv_score = None
 
     def train(self, X_train, y_train, params=None, cv=3):
         """Train DecisionTree with optional hyperparameter tuning."""
@@ -54,40 +58,32 @@ class DecisionTreeSentiment:
         acc = accuracy_score(y_test, y_pred)
         return acc, 1 - acc
 
+    def save(self, save_dir):
+        """Save trained pipeline to a directory."""
+        os.makedirs(save_dir, exist_ok=True)
+        save_path = os.path.join(save_dir, "decision_tree_pipeline.joblib")
+        joblib.dump(self.model, save_path)
+        print(f"Model saved to: {save_path}")
 
-    import os
-    import joblib
 
-    def load_saved_model(saved_dir: str):
-        """
-        Load the saved DecisionTree + CountVectorizer pipeline model.
+# ------------------------
+# SEPARATE GLOBAL FUNCTION
+# ------------------------
 
-        Parameters
-        ----------
-        saved_dir : str
-            Directory containing the saved pipeline file `decision_tree_pipeline.joblib`
+def load_saved_model(saved_dir: str):
+    """
+    Load the saved DecisionTree + CountVectorizer pipeline model.
+    """
 
-        Returns
-        -------
-        dict :
-            {
-                "model": Pipeline object (CountVectorizer + Decision Tree),
-                "embedding": CountVectorizer inside the pipeline
-            }
-        """
+    model_path = os.path.join(saved_dir, "decision_tree_pipeline.joblib")
 
-        model_path = os.path.join(saved_dir, "decision_tree_pipeline.joblib")
+    if not os.path.exists(model_path):
+        raise FileNotFoundError(f"Saved model not found: {model_path}")
 
-        if not os.path.exists(model_path):
-            raise FileNotFoundError(f"Saved model not found: {model_path}")
+    pipeline = joblib.load(model_path)
+    vectorizer = pipeline.named_steps["vec"]
 
-        pipeline = joblib.load(model_path)
-
-        # extract vectorizer (embedding)
-        vectorizer = pipeline.named_steps["vec"]
-
-        return {
-            "model": pipeline,
-            "embedding": vectorizer
-        }
-
+    return {
+        "model": pipeline,
+        "embedding": vectorizer
+    }
