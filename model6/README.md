@@ -6,6 +6,17 @@ Core Architecture: *DFIDF + Logistic Regression* / *Word2Vec + SVM* / *DFIDF + S
 
 ## How to use the models
 
+Make sure you have PySpark installed and create SparkSession
+
+```python
+from pyspark.sql import SparkSession
+
+spark  = SparkSession.builder \
+                            .master("local[*]")\
+                            .appName("SparkByExamples.com")\
+                            .getOrCreate()
+```
+
 ### DFIDF + Logistic Regression (Baseline)
 
 ```python
@@ -55,3 +66,4 @@ evaluator = MulticlassClassificationEvaluator(
 accuracy = evaluator.evaluate(predictions)
 print(f"Test Accuracy: {accuracy:.4f}")
 ```
+
