@@ -7,7 +7,7 @@ wandb
 scikit-learn
 transformers
 huggingface_hub
-
+spark
 # ------------------------------
 #  marcus part requirements
 # ------------------------------
