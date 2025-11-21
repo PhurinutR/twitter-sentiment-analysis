@@ -4,6 +4,7 @@ from pyspark.sql import SparkSession
 from util.preprocessing import load_and_preprocess_data
 from gensim.models import Word2Vec
 from gensim.models.phrases import Phraser
+from huggingface_hub import hf_hub_download
 
 spark = SparkSession.builder.appName("Inference").getOrCreate()
 spark.sparkContext.addPyFile(os.path.abspath('../util/preprocessing.py'))
