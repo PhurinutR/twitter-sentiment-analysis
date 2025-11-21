@@ -24,7 +24,7 @@ def main():
 
     # Model saving directory (default saves to the model5/saved_models directory, set to None if you don't want to save models)
     # save_dir = "model5/saved_models"
-    save_dir = "model5/saved_models"
+    save_dir = "model5/saved_models_tuned"
 
     # Sample dictionary of parameters for TF-IDF and Naive Bayes
     tfidf_parameters = {"min_df": 4, "max_df": 0.95, "ngram_range": (1, 2)} # Fine-tuning of embedding model
