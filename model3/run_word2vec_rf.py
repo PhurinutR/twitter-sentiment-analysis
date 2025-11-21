@@ -17,6 +17,21 @@ w2v = Word2Vec.load("saved_models2/word2vec_best.model")
 clf = joblib.load("saved_models2/best_classifier.pkl")
 phraser = Phraser.load("saved_models2/bigram_phraser.model")
 
+
+
+#to load the model directly from hf (comment the code above out):
+# repo_id = "chrislhg/word2vec-rf"
+
+# # Download model files
+# w2v_path = hf_hub_download(repo_id=repo_id, filename="word2vec_best.model")
+# clf_path = hf_hub_download(repo_id=repo_id, filename="best_classifier.pkl")
+# phraser_path = hf_hub_download(repo_id=repo_id, filename="bigram_phraser.model")
+
+# # Load models
+# w2v = Word2Vec.load(w2v_path)
+# clf = joblib.load(clf_path)
+# phraser = Phraser.load(phraser_path)
+
 # Predict
 emb = np.array([
     np.mean([w2v.wv[t] for t in phraser[row['Phrase'].split()] if t in w2v.wv], axis=0)
