@@ -72,7 +72,7 @@ from sklearn.naive_bayes import MultinomialNB
 
 vectorizer: TfidfVectorizer = data['embedding']
 sample = vectorizer.transform(list_of_sample_texts)
-model: NaiveBayesModel = data['model']
+model: MultinomialNB = data['model']
 predictions = model.predict(sample)
 ```
 A comprehensive example is provided in `test_load.py`, which also provides the classification prediction ability using scikit-learn libraries.
