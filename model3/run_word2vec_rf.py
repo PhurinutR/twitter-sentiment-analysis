@@ -13,25 +13,25 @@ spark.sparkContext.addPyFile(os.path.abspath('../util/preprocessing.py'))
 test_df = load_and_preprocess_data("../Twitter_data/testdata7.csv")
 test_pd = test_df.toPandas()
 
-# Load everything
-w2v = Word2Vec.load("saved_models2/word2vec_best.model")
-clf = joblib.load("saved_models2/best_classifier.pkl")
-phraser = Phraser.load("saved_models2/bigram_phraser.model")
+# # Load everything
+# w2v = Word2Vec.load("saved_models2/word2vec_best.model")
+# clf = joblib.load("saved_models2/best_classifier.pkl")
+# phraser = Phraser.load("saved_models2/bigram_phraser.model")
 
 
 
 #to load the model directly from hf (comment the code above out):
-# repo_id = "chrislhg/word2vec-rf"
+repo_id = "chrislhg/word2vec-rf"
 
-# # Download model files
-# w2v_path = hf_hub_download(repo_id=repo_id, filename="word2vec_best.model")
-# clf_path = hf_hub_download(repo_id=repo_id, filename="best_classifier.pkl")
-# phraser_path = hf_hub_download(repo_id=repo_id, filename="bigram_phraser.model")
+# Download model files
+w2v_path = hf_hub_download(repo_id=repo_id, filename="word2vec_best.model")
+clf_path = hf_hub_download(repo_id=repo_id, filename="best_classifier.pkl")
+phraser_path = hf_hub_download(repo_id=repo_id, filename="bigram_phraser.model")
 
-# # Load models
-# w2v = Word2Vec.load(w2v_path)
-# clf = joblib.load(clf_path)
-# phraser = Phraser.load(phraser_path)
+# Load models
+w2v = Word2Vec.load(w2v_path)
+clf = joblib.load(clf_path)
+phraser = Phraser.load(phraser_path)
 
 # Predict
 emb = np.array([
