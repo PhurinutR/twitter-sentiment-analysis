@@ -11,6 +11,12 @@ model1/final_model_finetuned
 /model2/lstm_traget/
 /model2/saved_models/
 
+/model7/data/
+/model7/.vector_cache/
+/model7/lstm/
+/model7/RNN/
+/model7/saved_models/
+
 
 .vector_cache/
 
