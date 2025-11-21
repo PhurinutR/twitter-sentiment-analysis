@@ -4,13 +4,11 @@ import os
 import joblib
 from model.package import load_dataset, clean_text, DecisionTreeSentiment
 
-# ---------------------------------------------------------
-# Paths (adjust if needed)
+# Paths
 TRAIN_PATH = "data/train.csv"
 TEST_PATH = "data/test.csv"
 SAVE_DIR = "saved_model"
 os.makedirs(SAVE_DIR, exist_ok=True)
-# ---------------------------------------------------------
 
 # 1. Load dataset
 X_train, y_train, X_test, y_test = load_dataset(TRAIN_PATH, TEST_PATH)
