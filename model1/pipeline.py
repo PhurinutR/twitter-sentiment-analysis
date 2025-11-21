@@ -357,7 +357,7 @@ class BertDNNPipeline:
         return epoch, loss, val_acc
 
     @classmethod
-    def load(cls, path: str, head_hidden_dims=[512, 256], num_classes=4, freeze_bert=False):
+    def load(cls, path: str, head_hidden_dims=[512, 256], num_classes=4, freeze_bert=False, use_wandb=True):
         tokenizer = BertTokenizer.from_pretrained(path)
         bert = BertModel.from_pretrained('bert-base-uncased')  # reload base
 
@@ -375,7 +375,8 @@ class BertDNNPipeline:
             max_length=config["max_length"],
             freeze_bert=freeze_bert,
             batch_size=config["batch_size"],
-            lr=config["lr"]
+            lr=config["lr"],
+            use_wandb=use_wandb,
         )
         pipeline.model = model.to(pipeline.device)
         pipeline.tokenizer = tokenizer
