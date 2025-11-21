@@ -32,3 +32,8 @@ pandas==2.3.3
 numpy==2.3.4
 seaborn==0.13.2
 matplotlib==3.10.7
+
+# ------------------------------
+#  chris part requirements
+# ------------------------------
+gensim
