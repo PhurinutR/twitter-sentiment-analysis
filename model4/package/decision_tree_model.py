@@ -53,3 +53,41 @@ class DecisionTreeSentiment:
         y_pred = self.predict(X_test)
         acc = accuracy_score(y_test, y_pred)
         return acc, 1 - acc
+
+
+    import os
+import joblib
+
+def load_saved_model(saved_dir: str):
+    """
+    Load the saved DecisionTree + CountVectorizer pipeline model.
+
+    Parameters
+    ----------
+    saved_dir : str
+        Directory containing the saved pipeline file `decision_tree_pipeline.joblib`
+
+    Returns
+    -------
+    dict :
+        {
+            "model": Pipeline object (CountVectorizer + Decision Tree),
+            "embedding": CountVectorizer inside the pipeline
+        }
+    """
+
+    model_path = os.path.join(saved_dir, "decision_tree_pipeline.joblib")
+
+    if not os.path.exists(model_path):
+        raise FileNotFoundError(f"Saved model not found: {model_path}")
+
+    pipeline = joblib.load(model_path)
+
+    # extract vectorizer (embedding)
+    vectorizer = pipeline.named_steps["vec"]
+
+    return {
+        "model": pipeline,
+        "embedding": vectorizer
+    }
+
