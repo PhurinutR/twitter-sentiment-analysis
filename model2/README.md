@@ -4,14 +4,8 @@ This folder provides a Python package that encapsulates the GloVe embedding, LST
 
 The main package file: `lstm_package/model.py` contains the core architecture of the implemetation, the details as follows:
   - `train_lstm(data_dir, run_dir, **kwargs)`: trains the model with configurable hyperparameters via `**kwargs`, saves model data and Fields, and returns accuracy and loss metrics.
-  - `load_lstm(run_dir)`: loads saved Fields and the best model data and reconstructs the model ready for inference.
-  - `predict_sentiment(model, TEXT, texts)`: classify raw texts data into sentiments.
+  - `predict_texts(text_list)`: loads saved best model and reconstructs the model ready for, classify list of texts data into sentiments, then obtain the predictions.
 
-Also, another file: `lstm_package/test_model.py` is provided to demonstrate LSTM model training, saving, loading, and class prediction. Please run from repo root directory:
-
-```bash
-python -m model2.lstm_package.test_model
-```
 
 ## Prerequisite
 

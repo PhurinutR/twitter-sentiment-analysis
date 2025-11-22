@@ -282,8 +282,6 @@ def load_lstm(run_dir: str):
     return {'model': model, 'TEXT': TEXT, 'LABEL': LABEL, 'config': config}
 
 
-# model2/lstm_package/model_inference.py
-
 
 
 # Define the LSTM-based model (same architecture as used in training)
