@@ -369,7 +369,7 @@ def predict_texts(text_list):
     # Initialize model and load parameters
     model = LSTMClassifier2(INPUT_DIM, EMBEDDING_DIM, HIDDEN_DIM, 
                         OUTPUT_DIM, N_LAYERS, BIDIRECTIONAL, DROPOUT, pad_idx=PAD_IDX)
-    model.load_state_dict(torch.load(SAVED_DIR /"best_acc.pt", map_location=device))
+    model.load_state_dict(torch.load(SAVED_DIR /"best_acc.pt", map_location=device), weights_only = False)
     model.to(device)
     model.eval()  # set model to evaluation mode
     predictions = []
