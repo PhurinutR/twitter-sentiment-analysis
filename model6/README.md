@@ -2,7 +2,7 @@
 
 Author: *Komine Shunji*
 
-Core Architecture: *DFIDF + Logistic Regression* / *Word2Vec + SVM* / *DFIDF + SVM*
+Core Architecture: *TFIDF + Logistic Regression* / *Word2Vec + SVM* / *TFIDF + SVM*
 
 ## How to use the models
 
@@ -17,7 +17,7 @@ spark  = SparkSession.builder \
                             .getOrCreate()
 ```
 
-### DFIDF + Logistic Regression (Baseline)
+### TFIDF + Logistic Regression (Baseline)
 
 ```python
 from pyspark.ml import PipelineModel
@@ -38,12 +38,12 @@ predictions = pipeline_model.transform(cleaned_new_df)
 predictions.select("Phrase", "prediction").show()
 ```
 
-### DFIDF + SVM
+### TFIDF + SVM
 
 ```python
-# Change above example with this line to use 'dfidf_svm'
+# Change above example with this line to use 'tfidf_svm'
 # Load the model
-pipeline_model = PipelineModel.load("model6/dfidf_svm")
+pipeline_model = PipelineModel.load("model6/tfidf_svm")
 ```
 
 ### Word2Vec + SVM
