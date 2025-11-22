@@ -15,4 +15,5 @@ seaborn==0.13.2
 matplotlib==3.10.7
 gensim
 wordcloud
+torch==2.9.0 
 # please install torch from the official website

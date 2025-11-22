@@ -64,33 +64,8 @@ class FolderDataset(data.Dataset):
         return train_ds, test_ds
 
 
-class LSTMClassifier(nn.Module):
-    def __init__(self, vocab_size: int, embedding_dim: int, hidden_dim: int, output_dim: int, n_layers: int, bidirectional: bool, dropout: float, pad_idx: int):
-        super().__init__()
-        self.embedding = nn.Embedding(vocab_size, embedding_dim, padding_idx=pad_idx)
-        self.rnn = nn.LSTM(embedding_dim, hidden_dim, num_layers=n_layers, bidirectional=bidirectional, dropout=dropout if n_layers > 1 else 0.0)
-        fc_input_dim = hidden_dim * 2 if bidirectional else hidden_dim
-        self.fc = nn.Linear(fc_input_dim, output_dim)
-        self.dropout = nn.Dropout(dropout)
-        self.bidirectional = bidirectional
 
-    def forward(self, text, text_lengths):
-        # text: [sentence_length, batch_size]
-        embedded = self.dropout(self.embedding(text))
-        packed_embedded = nn.utils.rnn.pack_padded_sequence(embedded, text_lengths.to('cpu'),enforce_sorted=False)
-        packed_output, (hidden, cell) = self.rnn(packed_embedded)
-        nn.utils.rnn.pad_packed_sequence(packed_output)
-
-        if self.bidirectional:
-            hidden_combined = torch.cat((hidden[-2,:,:], hidden[-1,:,:]), dim=1)
-        else:
-            hidden_combined = hidden[-1,:,:]
-
-        hidden_dropped = self.dropout(hidden_combined)
-        return self.fc(hidden_dropped)
-
-
-def train_lstm(
+def train_rnn(
     data_dir: str,
     run_dir: str,
     embedding_dim: int = 300,
@@ -135,7 +110,7 @@ def train_lstm(
 
     train_iter, test_iter = data.BucketIterator.splits((train_data, test_data), batch_size=batch_size, sort_within_batch=True, device=device)
 
-    model = LSTMClassifier(INPUT_DIM, embedding_dim, hidden_dim, OUTPUT_DIM, n_layers, bidirectional, dropout, pad_idx=PAD_IDX)
+    model = RNNClassifier(INPUT_DIM, embedding_dim, hidden_dim, OUTPUT_DIM, n_layers, bidirectional, dropout, pad_idx=PAD_IDX)
     model = model.to(device)
 
     # Initialize embeddings for UNK and PAD to zeros if pre-trained is used
@@ -225,105 +200,48 @@ def train_lstm(
 
     return {'best_test_acc': best_test_acc, 'best_test_loss': best_test_loss, 'data': result, 'config': config}
 
-
-def load_lstm(run_dir: str):
-    """
-    Load saved model data: fields, config. Then reconstruct the model.
-
-    Returns a dictionary: {'model': model, 'TEXT': TEXT, 'LABEL': LABEL, 'config': config}
-    """
-
-    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-    run_dir = os.path.abspath(run_dir)
-    
-    # load configs
-    cfg_path = os.path.join(run_dir, 'config.json')
-    if not os.path.exists(cfg_path):
-        raise FileNotFoundError(f'config.json not found in {run_dir}')
-    with open(cfg_path, 'r') as f:
-        config = json.load(f)
-
-    # load fields
-    fields_path = os.path.join(run_dir, 'fields.pth')
-
-    label_field_path = os.path.join(run_dir, 'label_field.pth')
-
-
-    if not os.path.exists(fields_path) or not os.path.exists(label_field_path):
-        raise FileNotFoundError('Saved Fields not found in run_dir')
-    TEXT = torch.load(fields_path,weights_only=False)
-    LABEL = torch.load(label_field_path,weights_only=False)
-
-    # reconstruct model from the configs
-    INPUT_DIM = config.get('vocab_size', len(TEXT.vocab))
-    EMBEDDING_DIM = config['embedding_dim']
-    HIDDEN_DIM = config['hidden_dim']
-    OUTPUT_DIM = config.get('output_dim', len(LABEL.vocab))
-    N_LAYERS = config['n_layers']
-    BIDIRECTIONAL = config['bidirectional']
-    DROPOUT = config['dropout']
-    PAD_IDX = config['pad_idx']
-
-    model = LSTMClassifier(INPUT_DIM, EMBEDDING_DIM, HIDDEN_DIM, OUTPUT_DIM, N_LAYERS, BIDIRECTIONAL, DROPOUT, pad_idx=PAD_IDX)
-    
-    # Prefer best_acc if possible
-    best_acc = os.path.join(run_dir, 'best_acc.pt')
-    best_loss = os.path.join(run_dir, 'best_loss.pt')
-    if os.path.exists(best_acc):
-        state_path = best_acc
-    elif os.path.exists(best_loss):
-        state_path = best_loss
-    else:
-        raise FileNotFoundError('No saved model state found in run_dir')
-
-    model.load_state_dict(torch.load(state_path, map_location=device))
-    model = model.to(device).eval()
-
-    return {'model': model, 'TEXT': TEXT, 'LABEL': LABEL, 'config': config}
-
-
 # model2/lstm_package/model_inference.py
 
 
 
 # Define the LSTM-based model (same architecture as used in training)
-class LSTMClassifier2(nn.Module):
+class RNNClassifier(nn.Module):
     def __init__(self, vocab_size, embedding_dim, hidden_dim, output_dim, 
                  n_layers, bidirectional, dropout, pad_idx):
         super().__init__()
-        # Embedding layer (with padding index for PAD tokens)
+        # Embedding layer with padding index
         self.embedding = nn.Embedding(vocab_size, embedding_dim, padding_idx=pad_idx)
-        # LSTM layer(s)
-        self.rnn = nn.LSTM(embedding_dim, hidden_dim, 
-                           num_layers=n_layers, 
-                           bidirectional=bidirectional, 
-                           dropout=dropout if n_layers > 1 else 0.0)
-        # Fully-connected layer (input doubled if bidirectional)
+        # Recurrent layer: stacked RNN
+        self.rnn = nn.RNN(embedding_dim, hidden_dim, 
+                          num_layers=n_layers, 
+                          bidirectional=bidirectional, 
+                          dropout=dropout if n_layers > 1 else 0.0)
+        # Linear layer input size depends on bidirectional
         fc_input_dim = hidden_dim * 2 if bidirectional else hidden_dim
         self.fc = nn.Linear(fc_input_dim, output_dim)
         self.dropout = nn.Dropout(dropout)
         self.bidirectional = bidirectional
 
     def forward(self, text, text_lengths):
-        # text shape: [sentence_length, batch_size]
-        # text_lengths shape: [batch_size]
+        # text: [sentence_length, batch_size]
+        # text_lengths: [batch_size]
         embedded = self.dropout(self.embedding(text))
-        # Pack sequence for efficient processing (uses CPU lengths for packing)
-        packed_embedded = nn.utils.rnn.pack_padded_sequence(embedded, text_lengths.to("cpu"))
-        packed_output, (hidden, cell) = self.rnn(packed_embedded)
-        # Unpack sequence (output tensor is not used further, only final hidden state is needed)
+        # Pack the sequence of embeddings (for variable-length sequence support)
+        packed_embedded = nn.utils.rnn.pack_padded_sequence(embedded, text_lengths.to('cpu'))
+        packed_output, hidden = self.rnn(packed_embedded)
+        # Unpack the sequence (we won't use the padded output, so just call pad_packed_sequence without assignment)
         nn.utils.rnn.pad_packed_sequence(packed_output)
         # hidden shape: [n_layers * num_directions, batch_size, hidden_dim]
         if self.bidirectional:
-            # Concatenate the final forward and backward hidden states
+            # Concatenate final forward and backward hidden states from the last layer
             hidden_combined = torch.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1)
         else:
-            # Use the final hidden state from the last layer (unidirectional case)
+            # Use the final hidden state from the last layer
             hidden_combined = hidden[-1, :, :]
-        # Apply dropout to the final hidden state and pass it through the fully connected layer
+        # Apply dropout to the final hidden state and feed through the fully connected layer
         hidden_dropped = self.dropout(hidden_combined)
-        logits = self.fc(hidden_dropped)
-        return logits
+        return self.fc(hidden_dropped)
+
 
 
 def predict_texts(text_list):
@@ -367,7 +285,7 @@ def predict_texts(text_list):
     PAD_IDX = TEXT.vocab.stoi.get(TEXT.pad_token, 1)  # index of <pad> token (default to 1 if not found)
 
     # Initialize model and load parameters
-    model = LSTMClassifier2(INPUT_DIM, EMBEDDING_DIM, HIDDEN_DIM, 
+    model = RNNClassifier(INPUT_DIM, EMBEDDING_DIM, HIDDEN_DIM, 
                         OUTPUT_DIM, N_LAYERS, BIDIRECTIONAL, DROPOUT, pad_idx=PAD_IDX)
     model.load_state_dict(torch.load(SAVED_DIR /"best_acc.pt", map_location=device))
     model.to(device)
