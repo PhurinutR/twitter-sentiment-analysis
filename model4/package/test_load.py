@@ -1,8 +1,8 @@
 # Load the saved Decision Tree sentiment model + CountVectorizer
 
 import os
-from model.package.decision_tree_model import load_saved_model
-from model.package.preprocess import clean_text
+from model4.package.decision_tree_model import load_saved_model
+from model4.package.preprocess import clean_text
 
 SAVE_DIR = "saved_model"
 
