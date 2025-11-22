@@ -9,6 +9,23 @@ A complete pipeline for Twitter/X sentiment classification using **Word2Vec** fo
 3. **Random Forest** pretrained on the large labeled data → stable hyperparameters  
 4. **Finetuning** of the Random Forest on a combination of large + small data (with higher weight on the small set)  
 5. Models saved for easy inference
+  
+6. Result:
+```
+Word2Vec Parameters:  
+• vector_size : 200  
+• window : 8  
+• sg : 1  
+• epochs : 40  
+• negative : 15  
+Random Forest Parameters:  
+• class_weight: balanced  
+• max_depth : 12  
+• min_samples_leaf: 2  
+• n_estimators: 300  
+Best Train Accuracy: 0.9949664429530202  
+Best Test Accuracy: 0.8287153652392947
+```
 
 ## Requirements
 
@@ -35,6 +52,7 @@ python train_word2vec_rf_tuned.py
 - Finetunes RF on large + small data (small data weighted higher)  
 - Saves everything to `saved_models2/`  
 - Prints final test macro-F1 and classification report
+
 
 ### 2. Run Inference on the Test Set
 
