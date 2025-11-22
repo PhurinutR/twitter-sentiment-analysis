@@ -2,7 +2,7 @@
 
 import os
 import joblib
-from model.package import load_dataset, clean_text, DecisionTreeSentiment
+from model4.package import load_dataset, clean_text, DecisionTreeSentiment
 
 # Paths
 TRAIN_PATH = "data/train.csv"
