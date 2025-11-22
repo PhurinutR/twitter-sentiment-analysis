@@ -276,11 +276,11 @@ def predict_texts(text_list):
 
     # Reconstruct the model and load trained weights
     INPUT_DIM = len(TEXT.vocab)
-    EMBEDDING_DIM = 2700   # must match the embedding dim used during training
+    EMBEDDING_DIM = 900   # must match the embedding dim used during training
     HIDDEN_DIM = 256       # must match hidden dim from training
     OUTPUT_DIM = len(LABEL.vocab)   # number of classes (e.g., 4 if labels 0-3)
     N_LAYERS = 2           # number of LSTM layers as used in training
-    BIDIRECTIONAL = True   # should match training (True for bi-LSTM)
+    BIDIRECTIONAL = False   # should match training (True for bi-LSTM)
     DROPOUT = 0.5          # dropout probability used in training
     PAD_IDX = TEXT.vocab.stoi.get(TEXT.pad_token, 1)  # index of <pad> token (default to 1 if not found)
 
