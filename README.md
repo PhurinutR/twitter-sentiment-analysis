@@ -17,14 +17,22 @@ pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130
 ```
 
 ### Large Model Weight Installation Guides
-1. For model1 which is BERT + DNN (ResNet), please see this [model 1 installation guideline](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model1).
+For model1 which is BERT + DNN (ResNet), please see this [model 1 installation guideline](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model1).
 
-2. For model2 which is GloVe and (Bidirectional) LSTM, please see the [guide in model 2](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model2).
+For model3 which is Word2Vec + Random Forest, please see this [model 3 installation guideline](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model3).
 
-3. For model3 which is Doc2Vec + Random Forest, please see the [guide in model 3](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model3).
+### Guidelines on How to Use the Models
 
-4. For model4 which is CountVectorizer + Decision Tree, please refer to the [implementation guide in model 4](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model4).
+1. BERT + DNN (ResNet): [Model 1 installation guideline](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model1).
 
-5. For model5 which is TF-IDF + Naive Bayes, please follow the [implementation guide in model 5](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model5).
+2. GloVe + LSTM: [Guide in model 2](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model2).
 
-6. For model6 which is DFIDF + Logistic Regression / Word2Vec + SVM / DFIDF + SVM, refer to the [guide in model 6](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model6).
+3. Word2Vec + Random Forest: [Guide in model 3](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model3).
+
+4. CountVectorizer + Decision Tree: [Guide in model 4](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model4).
+
+5. TF-IDF + Naive Bayes: [Guide in model 5](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model5).
+
+6. DFIDF + Logistic Regression and Word2Vec + SVM (Baseline): [Guide in model 6](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model6).
+
+7. GloVe + RNN: [Guide in model 7](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model7).
