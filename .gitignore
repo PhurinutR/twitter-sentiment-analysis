@@ -1,22 +1,29 @@
 .venv
 wandb
+model1/__pycache__/
 model1/checkpoints
 model1/final_model
 model1/final_model_finetuned
 
-/model2/data/
-/model2/.vector_cache/
-/model2/lstm/
-/model2/lstm_traget2/
-/model2/lstm_traget/
-/model2/saved_models/
+model2/data/
+model2/.vector_cache/
+model2/lstm/
+model2/lstm_package/__pycache__/
+model2/lstm_traget2/
+model2/lstm_traget/
 
-/model7/data/
-/model7/.vector_cache/
-/model7/lstm/
-/model7/RNN/
-/model7/RNN2/
-/model7/saved_models/
+model3/util/__pycache__/
+model4/package/__pycache__/
+model5/package/__pycache__/
+
+model2/saved_models/
+model7/data/
+model7/.vector_cache/
+model7/lstm/
+model7/rnn_package/__pycache__/
+model7/RNN/
+model7/RNN2/
+model7/saved_models/
 
 .vector_cache/
 
