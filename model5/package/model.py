@@ -35,6 +35,7 @@ def _extract_docs_labels(spark_df, text_col: str = "Phrase", label_col: str = "S
 
 def _evaluate_with_model(model, vectorizer, documents, labels) -> Tuple[float, float]:
     """
+    Parent function to evaluate accuracy and loss (log) with given model and vectorizer.
     Return (accuracy_percent, log_loss_value) for given documents/labels.
     """
     X = vectorizer.transform(documents)

@@ -1,8 +1,8 @@
 # Model 5 Implementation Guide
 
-Author: *Marcus KWAN TH*
+Author: *KWAN Tsz Hei Marcus*
 
-Core architecture: **TF-IDF** embedding model with **Naive Bayes** classifier model
+Core architecture: **TF-IDF** embedding model with **Naive Bayes** classifier model (scikit-learn)
 
 ## Prerequisite
 1. Clone this GitHub repository into the local PC.
