@@ -68,7 +68,7 @@ class FolderDataset(data.Dataset):
 def train_rnn(
     data_dir: str,
     run_dir: str,
-    embedding_dim: int = 300,
+    embedding_dim: int = 900,
     hidden_dim: int = 256,
     n_layers: int = 2,
     bidirectional: bool = True,

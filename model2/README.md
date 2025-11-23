@@ -22,15 +22,35 @@ result = train_lstm('data', 'model2/data', n_epochs=5, batch_size=32)
 print(result)
 ```
 
-- Load a saved model and run predictions:
+- Load a best model(best: embedding_dim: 2700,2_layers, bidirectional, dropout: 0.5) and run predictions:
 
 ```python
-from model2.lstm_package import load_lstm, predict_sentiment
-data = load_lstm('model2/data')
-model = data['model']
-TEXT = data['TEXT']
-preds = predict_sentiment(model, TEXT, ['I love this', 'This is bad', 'Sounds alright.'])
-print(preds)
+from model2.lstm_package import predict_texts
+texts = [
+
+'i rather the guy learn whatever game he enjoy the fastest. which be stupid lol',
+'lucky colat i ve even get in',
+'gta online update for june / july timeframe will cop and robber book it',
+]
+
+predictions = predict_texts(texts)  
+
+
+print(predictions)  
+#=======================
+df = load_and_preprocess_data("Twitter_data/testdata7.csv")
+m2_pd = df.toPandas() 
+testing_dataset_m2 = m2_pd["Phrase"].astype(str).tolist()   # <- now a plain list[str]
+# print(testing_dataset)
+
+# predictions : list of model outputs 
+predictions_2 = predict_texts(testing_dataset_m2)
+print(predictions_2)        # raw probabilities (0-1)
+
+# true_labels : list of gold labels
+true_labels = m2_pd["Sentiment"].tolist()
+print(true_labels)
+
 ```
 
 ## Notes
