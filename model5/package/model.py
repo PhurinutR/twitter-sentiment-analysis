@@ -9,8 +9,7 @@ from sklearn.metrics import accuracy_score, log_loss
 from typing import Optional, Dict, Tuple
 import os, sys, joblib
 
-# Set PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON to current Python executable, 
-# to prevent PySpark from using a different Python interpreter
+# Set PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON to current Python executable to prevent PySpark from using a different Python interpreter
 os.environ['PYSPARK_PYTHON'] = sys.executable
 os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
 
@@ -99,7 +98,7 @@ def train_model(train_csv: str, save_model_path: Optional[str] = None, tfidf_par
 
 def evaluate_saved_model(models: Dict, train_csv: Optional[str] = None, test_csv: Optional[str] = None):
     """
-    Load saved embedding and classifier models and evaluate on provided CSV paths.
+    Import saved embedding and classifier models and evaluate on provided train/testing data CSVs' paths.
 
     Args:
         models: Dictionary containing the loaded embedding and classifier models. Required.
@@ -134,7 +133,8 @@ def evaluate_saved_model(models: Dict, train_csv: Optional[str] = None, test_csv
     return results
 
 def load_saved_model(saved_dir: str):
-    """Load a saved embedding and classifier models locally.
+    """
+    Load a saved embedding and classifier models locally.
 
     The function looks for the following structures under `saved_dir`:
     - `{saved_dir}/scikit/scikit_model.pt` and `{saved_dir}/scikit/embedding.pt` (scikit-learn)
