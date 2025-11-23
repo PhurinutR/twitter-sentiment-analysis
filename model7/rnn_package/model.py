@@ -93,7 +93,7 @@ def train_rnn(
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     os.makedirs(run_dir, exist_ok=True)
 
-    TEXT = data.Field(tokenize='spacy', tokenizer_language='en_core_web_sm', include_lengths=True)
+    TEXT = data.Field(tokenize='spacy', tokenizer_language='en_core_web_trf', include_lengths=True)
     LABEL = data.LabelField(dtype=torch.long)
 
     print('Loading datasets...')
