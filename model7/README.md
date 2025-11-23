@@ -10,7 +10,8 @@ The main package file: `rnn_package/model.py` contains the core architecture of 
 ## Prerequisite
 
 1. Make sure to install all necessary libraries by following the **"Getting Started"** guide in the repo home page.
-2. Pre-process the training data first, by running
+2. Pre-process the training data first
+3. run python -m spacy download en_core_web_sm and python -m spacy download en_core_web_trf at the env
 
 ## Usage
 
@@ -28,10 +29,7 @@ data_dir = Path("model7/data")
 data_dir.mkdir(parents=True, exist_ok=True)
 data_dir = "model7/data"                 # data/train / data/test
 
-# train
-"""
-Please run "model2_data_setup_LSTM.ipynb" from model2 before executing this cell!
-"""
+
 res = train_rnn(data_dir, run_dir, n_epochs=3, batch_size=32)
 print(res)
 ```
@@ -39,17 +37,35 @@ print(res)
 - Load a saved model and run predictions:
 
 ```python
-from model2.lstm_package import load_lstm, predict_sentiment
-data = load_lstm('model2/data')
-model = data['model']
-TEXT = data['TEXT']
-preds = predict_sentiment(model, TEXT, ['I love this', 'This is bad', 'Sounds alright.'])
-print(preds)
+texts = [
+    'so add a fucking rick roll emte with the', 
+'i rather the guy learn whatever game he enjoy the fastest. which be stupid lol',
+'lucky colat i ve even get in',
+'gta online update for june / july timeframe will cop and robber book it',
+]
+
+predictions = predict_texts(texts)  
+
+print(predictions)  
+
+#===============
+
+df = load_and_preprocess_data("Twitter_data/testdata7.csv")
+m7_pd = df.toPandas() 
+testing_dataset_m7 = m7_pd["Phrase"].astype(str).tolist()   # <- now a plain list[str]
+
+
+
+true_labels = m7_pd["Sentiment"].tolist()
+print(true_labels)
+#=========================================
+
+predictions_7 = predict_texts(testing_dataset_m7)
 ```
 
 ## Notes
 
 The package expects the dataset to be organized as `data/train/<label>/*.txt` and `data/test/<label>/*.txt`. 
-The notebook `model2_data_setup_forlstm.ipynb` contains a helper to export CSV into this structure — use it if your data is in CSV form.
+The notebook `model7_data_setup_forrnn.ipynb` contains a helper to export CSV into this structure
 
 Saved files include `fields.pth`, `label_field.pth`, `config.json`, and `best_acc.pt` / `best_loss.pt` in the provided `run_dir`.

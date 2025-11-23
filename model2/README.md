@@ -10,8 +10,8 @@ The main package file: `lstm_package/model.py` contains the core architecture of
 ## Prerequisite
 
 1. Make sure to install all necessary libraries by following the **"Getting Started"** guide in the repo home page.
-2. Pre-process the training data first, by running
-
+2. Pre-process the training data first
+3. run python -m spacy download en_core_web_sm and python -m spacy download en_core_web_trf at the env
 ## Usage
 
 - Train and save model data to `run_dir`:
