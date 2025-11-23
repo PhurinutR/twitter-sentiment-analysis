@@ -16,12 +16,15 @@ Then, install PyTorch that's appropriate for your machine. If you are on Linux y
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130
 ```
 
-### Large Model Weight Installation Guides
+### Playing with the Code:
+Please explore the the main comparison code in the jupyter notebook file called [model_compare.ipynb](https://github.com/PhurinutR/twitter-sentiment-analysis/blob/main/model_compare.ipynb). It combined every testings of every architectures that we have implemented, with detailed annotations.
+
+### Large Model Weight Installation Guides for Model 1 and 3:
 For model1 which is BERT + DNN (ResNet), please see this [model 1 installation guideline](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model1).
 
 For model3 which is Word2Vec + Random Forest, please see this [model 3 installation guideline](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model3).
 
-### Guidelines on How to Use the Models
+### Guidelines on How to Use individual Models / Architectures:
 
 1. BERT + DNN (ResNet): [Model 1 installation guideline](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model1).
 
@@ -37,5 +40,3 @@ For model3 which is Word2Vec + Random Forest, please see this [model 3 installat
 
 7. GloVe + RNN: [Guide in model 7](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model7).
 
-### Playing with the code
-Please explore the the main comparison code in the jupyter notebook file called [model_compare.ipynb](https://github.com/PhurinutR/twitter-sentiment-analysis/blob/main/model_compare.ipynb)
