@@ -1,5 +1,7 @@
 # Twitter-sentiment-analysis
 
+**DSAI4205 Group Project** (Group: TUT001 Mon 16:30-16:45)
+
 ## Getting Started
 After you cloned this GitHub repository, please run the following command to start playing with this project.
 
