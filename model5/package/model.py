@@ -28,7 +28,6 @@ def _extract_docs_labels(spark_df, text_col: str = "Phrase", label_col: str = "S
     """
     Parent function to convert Spark DataFrame to lists of documents and labels (strings and ints).
     """
-    print("\nExtracting docs and labels from data...")
     pdf = spark_df.select(text_col, label_col).toPandas()
     documents = pdf.iloc[:, 0].astype(str).tolist()
     labels = pdf.iloc[:, 1].astype(int).tolist()
@@ -120,16 +119,14 @@ def evaluate_saved_model(models: Dict, train_csv: Optional[str] = None, test_csv
 
     results = {}
     if train_csv:
-        train_df = load_and_preprocess_data(train_csv, text_column, sentiment_column).toPandas()
-        train_documents = train_df.iloc[:, 0].astype(str).tolist()
-        train_labels = train_df.iloc[:, 1].astype(int).tolist()
+        train_spark_df = load_and_preprocess_data(train_csv, text_column, sentiment_column)
+        train_documents, train_labels = _extract_docs_labels(train_spark_df, text_column, sentiment_column)
         acc, loss = _evaluate_with_model(model, vectorizer, train_documents, train_labels)
         results['train'] = {"accuracy": acc, "loss": loss}
 
     if test_csv:
-        test_df = load_and_preprocess_data(test_csv, text_column, sentiment_column).toPandas()
-        test_documents = test_df.iloc[:, 0].astype(str).tolist()
-        test_labels = test_df.iloc[:, 1].astype(int).tolist()
+        test_spark_df = load_and_preprocess_data(test_csv, text_column, sentiment_column)
+        test_documents, test_labels = _extract_docs_labels(test_spark_df, text_column, sentiment_column)
         acc, loss = _evaluate_with_model(model, vectorizer, test_documents, test_labels)
         results['test'] = {"accuracy": acc, "loss": loss}
 
