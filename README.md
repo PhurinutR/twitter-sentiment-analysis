@@ -36,3 +36,6 @@ For model3 which is Word2Vec + Random Forest, please see this [model 3 installat
 6. TF-IDF + Logistic Regression (Baseline) and TF-IDF + SVM: [Guide in model 6](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model6).
 
 7. GloVe + RNN: [Guide in model 7](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model7).
+
+### Playing with the code
+Please explore the the main comparison code in the jupyter notebook file called [model_compare.ipynb](https://github.com/PhurinutR/twitter-sentiment-analysis/blob/main/model_compare.ipynb)
