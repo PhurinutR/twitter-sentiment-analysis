@@ -33,6 +33,6 @@ For model3 which is Word2Vec + Random Forest, please see this [model 3 installat
 
 5. TF-IDF + Naive Bayes: [Guide in model 5](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model5).
 
-6. DFIDF + Logistic Regression and Word2Vec + SVM (Baseline): [Guide in model 6](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model6).
+6. TF-IDF + Logistic Regression (Baseline) and TF-IDF + SVM: [Guide in model 6](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model6).
 
 7. GloVe + RNN: [Guide in model 7](https://github.com/PhurinutR/twitter-sentiment-analysis/tree/main/model7).
